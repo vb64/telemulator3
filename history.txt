@@ -1,0 +1,4 @@
+??.?.2023 ver.1.0
+------------------
+
++ Mocked elements of the Telegram Bot API for unit tests.

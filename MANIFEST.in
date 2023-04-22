@@ -1,0 +1,2 @@
+recursive-include telemulator3 *
+global-exclude *.py[cod]
