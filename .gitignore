@@ -1,0 +1,8 @@
+*.pyc
+*.log
+.coverage
+htmlcov/*
+venv*
+build/*
+dist/*
+telemulator3.egg-info/*
