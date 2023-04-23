@@ -9,7 +9,6 @@ class EmulatorException(Exception):
 class Telemulator:
     """Class for Telegram API tests."""
 
-    bot = None
     api = None
     teleuser = None
     private = None
@@ -27,8 +26,15 @@ class Telemulator:
         - token: bot API token
         - process_new_updates([update]): method for process Telegram API update
         """
+        from .api import Telegram
+
         self.clean_proxy()
-        self.bot = bot
+        self.api = Telegram(bot)
+
+    @property
+    def bot(self):
+        """Shortcut for tested bot."""
+        return self.api.bot
 
     @staticmethod
     def clean_proxy():
