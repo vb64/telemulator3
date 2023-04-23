@@ -25,3 +25,10 @@ class TestApi(TestCase):
         func = emulate_bot(self.telemul.api, httpretty.GET)
         url = self.telemul.bot.token + '/' + 'testMethod?xxx'
         assert func(MockHttprettyRequest('zzz'), url, {}) == (200, {}, '"testMethodData"')
+
+    def test_fix_ampersand(self):
+        """Function fix_ampersand."""
+        from telemulator3.api import HTTPRETTY_AMPERSAND, fix_ampersand
+
+        assert fix_ampersand(['1' + HTTPRETTY_AMPERSAND + '2']) == ['1&2']
+        assert fix_ampersand(['123']) == ['123']
