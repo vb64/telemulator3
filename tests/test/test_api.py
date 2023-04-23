@@ -26,7 +26,7 @@ class TestApi(TestCase):
 
     def test_emulate_bot_get(self):
         """Emulate_bot with GET method."""
-        from telemulator3.api import emulate_bot
+        from telemulator3.api import emulate_bot, debug_print
 
         self.telemul.api.answers[self.method] = (self.code, self.data)
         func = emulate_bot(self.telemul.api, httpretty.GET)
@@ -37,20 +37,9 @@ class TestApi(TestCase):
         url = self.telemul.bot.token + '/{}'.format(self.method)
         assert func(MockHttprettyRequest('zzz'), url, self.headers) == self.answer
 
-    def test_debug_print(self):
-        """Check debug print."""
-        from telemulator3 import api
-
-        save = api.DEBUG_PRINT
-        api.DEBUG_PRINT = True
-
-        self.telemul.api.answers[self.method] = (self.code, self.data)
-        func = api.emulate_bot(self.telemul.api, httpretty.GET)
-
-        url = self.telemul.bot.token + '/{}'.format(self.method)
+        debug_print(True)
         assert func(MockHttprettyRequest('zzz'), url, self.headers) == self.answer
-
-        api.DEBUG_PRINT = save
+        debug_print(False)
 
     def test_fix_ampersand(self):
         """Function fix_ampersand."""

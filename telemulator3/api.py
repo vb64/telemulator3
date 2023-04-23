@@ -15,6 +15,12 @@ HTTPRETTY_AMPERSAND = '_httpretty_amp_'
 PACKAGE_PREFIX = os.path.basename(os.path.dirname(os.path.abspath(__file__)))
 
 
+def debug_print(is_on):
+    """Switch printing calls to Telegram API."""
+    global DEBUG_PRINT  # pylint: disable=global-statement
+    DEBUG_PRINT = is_on
+
+
 def fix_ampersand(text_list):
     """Replace apihelper.HTTPRETTY_AMPERSAND with '&' in each string in list."""
     return [i.replace(HTTPRETTY_AMPERSAND, '&') for i in text_list]
