@@ -17,7 +17,7 @@ PIP = $(PYTHON) -m pip install
 PYTEST = $(PTEST) --cov=$(SOURCE) --cov-report term:skip-covered
 PYLINT = $(PYTHON) -m pylint
 FLAKE8 = $(PYTHON) -m flake8
-PEP257 = $(PYTHON) -m pep257
+PEP257 = $(PYTHON) -m pydocstyle
 
 all: tests
 
