@@ -5,8 +5,8 @@ from io import BytesIO
 import cgi
 import json
 import importlib
-# from time import mktime
-# from datetime import datetime
+from time import mktime
+from datetime import datetime
 import httpretty
 # from telebot.types import Update as TeleUpdate
 
@@ -154,3 +154,14 @@ class Telegram:
                 return (400, str(err))
 
         return (200, "file content stub")
+
+    def get_date(self):
+        """Return current or emulated date."""
+        if self.custom_date:
+            return self.custom_date
+
+        return datetime.utcnow()
+
+    def get_date_int(self):
+        """Return current or emulated date as unix time (integer)."""
+        return mktime(self.get_date().timetuple())

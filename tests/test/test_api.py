@@ -3,6 +3,7 @@
 make test T=test_api.py
 """
 import json
+from datetime import datetime
 import httpretty
 from . import TestCase
 
@@ -128,3 +129,13 @@ f0ef73c5-54dd-40cf-9ee7-5c4cb764eb28
         assert code == 200
         assert data['ok']
         assert data["result"]["is_bot"]
+
+    def test_get_date_int(self):
+        """Method get_date_int."""
+        assert self.telemul.api.get_date_int()
+
+    def test_get_date(self):
+        """Method get_date."""
+        date = datetime.now()
+        self.telemul.api.custom_date = date
+        assert self.telemul.api.get_date() == date
