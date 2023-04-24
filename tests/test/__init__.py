@@ -31,3 +31,9 @@ class TestCase(unittest.TestCase):
         self.telemul = Telemulator()
         self.telemul.set_tested_bot(Bot())
         self.telemul.api.file_store_path = os.path.join('tests', 'file_store')
+        self.telemul.api.emulate_start()
+
+    def tearDown(self):
+        """Clean."""
+        self.telemul.api.emulate_stop()
+        super().tearDown()

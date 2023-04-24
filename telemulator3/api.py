@@ -165,3 +165,13 @@ class Telegram:
     def get_date_int(self):
         """Return current or emulated date as unix time (integer)."""
         return mktime(self.get_date().timetuple())
+
+    @staticmethod
+    def emulate_start():
+        """Trap calls to Telegram."""
+        httpretty.enable()
+
+    @staticmethod
+    def emulate_stop():
+        """Don't trap calls to Telegram."""
+        httpretty.disable()
