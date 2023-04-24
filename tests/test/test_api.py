@@ -2,6 +2,7 @@
 
 make test T=test_api.py
 """
+import os
 import json
 import httpretty
 from . import TestCase
@@ -76,3 +77,26 @@ f0ef73c5-54dd-40cf-9ee7-5c4cb764eb28
 
         assert fix_ampersand(['1' + HTTPRETTY_AMPERSAND + '2']) == ['1&2']
         assert fix_ampersand(['123']) == ['123']
+
+    def test_get_file(self):
+        """Method get_file must return 200 if custom_file_content set."""
+        code, data = self.telemul.api.get_file('not_exist')
+        assert code == 200
+        assert data == "file content stub"
+
+        self.telemul.api.custom_file_content = 'zzz'
+        code, data = self.telemul.api.get_file('not_exist')
+        assert code == 200
+        assert data == 'zzz'
+        self.telemul.api.custom_file_content = None
+
+        self.telemul.api.file_store_path = os.path.join('tests', 'file_store')
+        code, data = self.telemul.api.get_file('not_exist')
+        assert code == 400
+        assert 'No such file or directory' in data
+
+        code, data = self.telemul.api.get_file('test01.txt')
+        assert code == 200
+        assert 'test content' in data.decode('utf-8')
+
+        self.telemul.api.file_store_path = None

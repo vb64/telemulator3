@@ -141,3 +141,16 @@ class Telegram:
             }
 
         return (code, data)
+
+    def get_file(self, file_name):
+        """Return response code and content for file file_name."""
+        if self.custom_file_content:
+            return (200, self.custom_file_content)
+
+        if self.file_store_path:
+            try:
+                return (200, open(os.path.join(self.file_store_path, file_name), 'rb').read())
+            except IOError as err:
+                return (400, str(err))
+
+        return (200, "file content stub")
