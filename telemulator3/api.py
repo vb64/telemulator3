@@ -95,7 +95,7 @@ class Telegram:
       start_user_id=0,
       start_chat_id=1000,
     ):
-        """API instance."""
+        """Create API instance."""
         self.custom_date = None
         self.custom_file_content = None
         self.file_store_path = file_store_path

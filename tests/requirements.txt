@@ -1,7 +1,7 @@
 flask==2.2.3
 flake8
 pylint
-pep257
+pydocstyle
 pytest
 pytest-cov
 codacy-coverage
