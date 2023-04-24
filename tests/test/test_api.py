@@ -10,11 +10,12 @@ from . import TestCase
 class MockHttprettyRequest:
     """Mock httpretty request."""
 
-    def __init__(self, querystring, parsed_body=None, headers=None):
+    def __init__(self, querystring, parsed_body=None, headers=None, body=''):
         """Set querystring property."""
         self.querystring = querystring
         self.parsed_body = parsed_body or {}
         self.headers = headers or {}
+        self.body = body
 
 
 class TestApi(TestCase):
@@ -39,6 +40,17 @@ class TestApi(TestCase):
             'other_key': 'otherkey data'
           }
         )
+        assert func(request, url, self.headers)[0] == 400
+
+        request.headers['Content-Type'] = 'multipart/form-data; boundary=*****'
+        request.body = """
+--*****
+Content-Disposition: form-data; name="value1"
+Content-Type: text/plain; charset=UTF-8
+
+f0ef73c5-54dd-40cf-9ee7-5c4cb764eb28
+--*****
+        """
         assert func(request, url, self.headers)[0] == 400
 
     def test_emulate_bot_get(self):

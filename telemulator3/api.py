@@ -1,7 +1,7 @@
 """Telegram messenger Bot API emulator."""
 import os
 import re
-from io import StringIO
+from io import BytesIO
 import cgi
 import json
 import importlib
@@ -39,7 +39,10 @@ def emulate_bot(api, http_method):
             params = request.parsed_body
             if 'boundary=' in request.headers.get('Content-Type', ''):
                 _ctype, pdict = cgi.parse_header(request.headers['Content-Type'])
-                params = cgi.parse_multipart(StringIO(request.body), pdict)
+                params = cgi.parse_multipart(
+                  BytesIO(request.body.encode('utf-8')),
+                  {i: j.encode('utf-8') for i, j in pdict.items()}
+                )
 
             for key in params:
                 if key in ['text', 'reply_markup']:
