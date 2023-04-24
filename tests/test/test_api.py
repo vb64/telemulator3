@@ -121,3 +121,10 @@ f0ef73c5-54dd-40cf-9ee7-5c4cb764eb28
         assert 'test content' in data.decode('utf-8')
 
         self.telemul.api.file_store_path = None
+
+    def test_get_answer(self):
+        """Method get_answer."""
+        code, data = self.telemul.api.get_answer('getMe', '', {})
+        assert code == 200
+        assert data['ok']
+        assert data["result"]["is_bot"]
