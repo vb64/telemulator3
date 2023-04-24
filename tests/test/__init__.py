@@ -1,4 +1,5 @@
 """Root class for testing."""
+import os
 import unittest
 
 
@@ -25,3 +26,4 @@ class TestCase(unittest.TestCase):
         from telemulator3 import Telemulator
         self.telemul = Telemulator()
         self.telemul.set_tested_bot(Bot())
+        self.telemul.api.file_store_path = os.path.join('tests', 'file_store')

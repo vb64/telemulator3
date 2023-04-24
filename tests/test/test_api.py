@@ -2,7 +2,6 @@
 
 make test T=test_api.py
 """
-import os
 import json
 import httpretty
 from . import TestCase
@@ -11,12 +10,13 @@ from . import TestCase
 class MockHttprettyRequest:
     """Mock httpretty request."""
 
-    def __init__(self, querystring, parsed_body=None, headers=None, body=''):
+    def __init__(self, querystring, parsed_body=None, headers=None, body='', path=''):
         """Set querystring property."""
         self.querystring = querystring
         self.parsed_body = parsed_body or {}
         self.headers = headers or {}
         self.body = body
+        self.path = path
 
 
 class TestApi(TestCase):
@@ -27,6 +27,23 @@ class TestApi(TestCase):
     data = 'testMethodData'
     headers = {}
     answer = (code, headers, json.dumps(data))
+
+    def test_emulate_file(self):
+        """Function emulate_file."""
+        from telemulator3.api import emulate_file, debug_print
+
+        func = emulate_file(self.telemul.api, httpretty.GET)
+        request = MockHttprettyRequest('z', path='data/test01.txt')
+
+        answer = func(request, '', self.headers)
+        assert answer[0] == 200
+        assert answer[-1] == b'test content'
+
+        debug_print(True)
+        answer = func(request, '', self.headers)
+        assert answer[-1] == b'test content'
+        assert answer[0] == 200
+        debug_print(False)
 
     def test_emulate_bot_post(self):
         """Emulate_bot with POST method."""
@@ -80,6 +97,9 @@ f0ef73c5-54dd-40cf-9ee7-5c4cb764eb28
 
     def test_get_file(self):
         """Method get_file must return 200 if custom_file_content set."""
+        save = self.telemul.api.file_store_path
+        self.telemul.api.file_store_path = None
+
         code, data = self.telemul.api.get_file('not_exist')
         assert code == 200
         assert data == "file content stub"
@@ -90,7 +110,8 @@ f0ef73c5-54dd-40cf-9ee7-5c4cb764eb28
         assert data == 'zzz'
         self.telemul.api.custom_file_content = None
 
-        self.telemul.api.file_store_path = os.path.join('tests', 'file_store')
+        self.telemul.api.file_store_path = save
+
         code, data = self.telemul.api.get_file('not_exist')
         assert code == 400
         assert 'No such file or directory' in data
