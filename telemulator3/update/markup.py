@@ -107,6 +107,8 @@ class InlineKeyboard(InlineKeyboardMarkup):
 class KeyboardMarkup(ReplyKeyboardMarkup, JsonDeserializable):
     """Construct and return types.ReplyKeyboardMarkup from the given dictionary."""
 
+    keyboard = None
+
     @classmethod
     def de_json(cls, json_string):
         """From json."""
