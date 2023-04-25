@@ -23,3 +23,23 @@ class TestInit(TestCase):
         assert 'http_proxy' in os.environ
         self.telemul.clean_proxy()
         assert 'http_proxy' not in os.environ
+
+    def test_create_group(self):
+        """Check create_group call."""
+        group = self.telemul.create_group("Test group", self.teleuser)
+        assert len(group.members) == 1
+        assert self.teleuser.id in group.members
+        assert group.members[self.teleuser.id].can_invite_users
+
+        bot = self.api.get_me()
+        group = self.telemul.create_group("Test group", self.teleuser, members=[bot])
+        assert len(group.members) == 2
+        assert self.teleuser.id in group.members
+        assert bot.id in group.members
+
+        user = self.api.create_user('New User')
+        group = self.telemul.create_group("Test group", user, members=[bot])
+        assert len(group.members) == 2
+        assert user.id in group.members
+        assert bot.id in group.members
+        assert self.teleuser.id not in group.members

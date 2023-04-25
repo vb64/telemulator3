@@ -51,3 +51,23 @@ class Telemulator:
         """Switch printing calls to Telegram API."""
         from .api import debug_print
         debug_print(is_on)
+
+    @staticmethod
+    def create_group(title, from_user, members=None):
+        """Create Telegram group and set it as supergroup."""
+        from .chat import Type
+
+        group = from_user.create_group(title)
+        group.type = Type.Supergroup
+        if members:
+            group.add_members(from_user, members)
+
+        return group
+
+    def create_channel(self, title, from_user, add_bot=True):
+        """Xreate Telegram channel and add bot to it as channel admin."""
+        channel = from_user.create_channel(title)
+        if add_bot:
+            channel.add_admin(from_user, self.api.bot)
+
+        return channel

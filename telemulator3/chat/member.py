@@ -57,7 +57,7 @@ class ChatMember(ChatMemberBase):
       can_add_web_page_previews=False
     ):
         """Create chat member with given rights."""
-        super().__init__(
+        ChatMemberBase.__init__(
           self,
           user,
           status,

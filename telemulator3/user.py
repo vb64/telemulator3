@@ -24,7 +24,7 @@ class User(types.User):
 
     def __str__(self):
         """As text."""
-        return self.full_name()
+        return self.full_name
 
     @classmethod
     def from_bot(cls, api):
