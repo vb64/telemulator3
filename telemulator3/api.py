@@ -10,6 +10,8 @@ from datetime import datetime
 import httpretty
 # from telebot.types import Update as TeleUpdate
 
+from .user import User
+
 DEBUG_PRINT = False
 HTTPRETTY_AMPERSAND = '_httpretty_amp_'
 PACKAGE_PREFIX = os.path.basename(os.path.dirname(os.path.abspath(__file__)))
@@ -175,3 +177,11 @@ class Telegram:
     def emulate_stop():
         """Don't trap calls to Telegram."""
         httpretty.disable()
+
+    def get_me(self):
+        """Create and put to active users list instanse of the tested bot."""
+        if not self._me:
+            self._me = User.from_bot(self)
+            self.bot.id = self._me.id
+
+        return self._me
