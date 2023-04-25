@@ -30,6 +30,19 @@ class TestCase(unittest.TestCase):
         self.api.file_store_path = os.path.join('tests', 'file_store')
         self.api.emulate_start()
 
+        assert not self.api.users
+        assert self.api.get_me().username == self.api.bot.username
+        assert len(self.api.users) == 1
+
+        self.teleuser = self.api.create_user('Test', 'User', language_code='en')
+        self.private = self.teleuser.private()
+        self.group = self.teleuser.create_group("Test group")
+
+        from telemulator3.update.message import Text
+
+        self.tele_message = Text(self.private, self.teleuser, "Hello private!")
+        self.group_message = Text(self.group, self.teleuser, "Hello group!")
+
     def tearDown(self):
         """Clean."""
         self.api.emulate_stop()
