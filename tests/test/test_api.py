@@ -33,7 +33,7 @@ class TestApi(TestCase):
 
     def test_emulate_file(self):
         """Function emulate_file."""
-        from telemulator3.api import emulate_file, debug_print
+        from telemulator3.api import emulate_file
 
         func = emulate_file(self.api, httpretty.GET)
         request = MockHttprettyRequest('z', path='data/test01.txt')
@@ -42,11 +42,11 @@ class TestApi(TestCase):
         assert answer[0] == 200
         assert answer[-1] == b'test content'
 
-        debug_print(True)
+        self.telemul.print_trace(True)
         answer = func(request, '', self.headers)
         assert answer[-1] == b'test content'
         assert answer[0] == 200
-        debug_print(False)
+        self.telemul.print_trace(False)
 
     def test_emulate_bot_post(self):
         """Emulate_bot with POST method."""
@@ -165,6 +165,11 @@ f0ef73c5-54dd-40cf-9ee7-5c4cb764eb28
         assert not chat.history.messages
 
         assert self.api.send_update(chat, self.api.get_me(), history_item, message=message) is None
+
+        from telemulator3.update.callback_query import CallbackQuery
+
+        call = CallbackQuery(user, 'xxx', chat, message)
+        assert self.api.send_update(chat, user, history_item, message=message, callback_query=call)
 
     def test_create_bot(self):
         """Call create_bot must return user with is_bot == True."""

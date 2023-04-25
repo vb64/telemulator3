@@ -45,3 +45,9 @@ class Telemulator:
         for proxy in ['https_proxy', 'http_proxy']:
             if proxy in os.environ:
                 del os.environ[proxy]
+
+    @staticmethod
+    def print_trace(is_on):
+        """Switch printing calls to Telegram API."""
+        from .api import debug_print
+        debug_print(is_on)
