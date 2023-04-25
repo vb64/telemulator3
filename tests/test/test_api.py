@@ -163,3 +163,7 @@ f0ef73c5-54dd-40cf-9ee7-5c4cb764eb28
         self.telemul.api.send_update(None, None, history_item, message=message)
         assert message.message_id not in chat.history.messages
         assert not chat.history.messages
+
+    def test_create_bot(self):
+        """Call create_bot must return user with is_bot == True."""
+        assert self.telemul.api.create_bot('Test', 'test_bot').is_bot
