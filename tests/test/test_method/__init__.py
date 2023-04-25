@@ -8,4 +8,5 @@ class TestMethod(TestCase):
     def setUp(self):
         """Init vars."""
         super().setUp()
-        self.user = None
+        self.user = self.teleuser
+        self.group.add_members(self.user, [self.api.get_me()])
