@@ -37,7 +37,7 @@ def emulate_bot(api, http_method):
         # https://stackoverflow.com/questions/25645253/python-parsing-multipart-form-data-request-on-server-side
         # https://stackoverflow.com/questions/34326150/multipartparsererror-invalid-boundary
         # https://www.programcreek.com/python/example/6138/cgi.parse_multipart
-        if http_method == 'POST':
+        if (not params) and (http_method == 'POST'):
             params = request.parsed_body
             if 'boundary=' in request.headers.get('Content-Type', ''):
                 _ctype, pdict = cgi.parse_header(request.headers['Content-Type'])

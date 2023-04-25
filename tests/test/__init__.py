@@ -27,6 +27,7 @@ class TestCase(unittest.TestCase):
         self.telemul.set_tested_bot(Bot())
 
         self.api = self.telemul.api
+        self.bot = self.api.bot
         self.api.file_store_path = os.path.join('tests', 'file_store')
         self.api.emulate_start()
 
