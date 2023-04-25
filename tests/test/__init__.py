@@ -13,11 +13,6 @@ class Bot(telebot.TeleBot):
         self.name = 'Test bot'
         self.username = 'bot-username'
 
-    def process_new_updates(self, updates):
-        """Process Telegram API updates."""
-        for update in updates:
-            print('#', update)
-
 
 class TestCase(unittest.TestCase):
     """Inherit unittest."""
