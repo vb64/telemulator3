@@ -18,11 +18,11 @@ class Private(Chat):
               "Try to create existing private: {}".format(creator.api.chats[creator.id])
             )
 
-        super().__init__(
+        Chat.__init__(
           self,
           creator,
           Type.Private,
-          title=creator.full_name(),
+          title=creator.full_name,
           **kwargs
         )
         creator.api.bot_chats[self.id] = self

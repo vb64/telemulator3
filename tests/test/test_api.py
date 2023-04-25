@@ -5,6 +5,8 @@ make test T=test_api.py
 import json
 from datetime import datetime
 import httpretty
+
+from telebot.types import Message
 from . import TestCase
 
 
@@ -145,3 +147,19 @@ f0ef73c5-54dd-40cf-9ee7-5c4cb764eb28
         bot = self.telemul.api.get_me()
         assert bot.id == 1
         assert self.telemul.api.get_me().id == 1
+
+    def test_send_update(self):
+        """Call for send_update must put history_item to the history of appropriate chat."""
+        user = self.telemul.api.create_user('Test')
+        chat = user.private()
+        message = Message(111, user, self.telemul.api.get_date(), chat, "json", {}, '')
+        history_item = (message.message_id, message)
+
+        self.telemul.api.send_update(chat, user, history_item, message=message)
+        assert message.message_id in chat.history.messages
+
+        chat.history.clear()
+
+        self.telemul.api.send_update(None, None, history_item, message=message)
+        assert message.message_id not in chat.history.messages
+        assert not chat.history.messages
