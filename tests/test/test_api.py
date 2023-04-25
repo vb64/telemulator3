@@ -164,6 +164,8 @@ f0ef73c5-54dd-40cf-9ee7-5c4cb764eb28
         assert message.message_id not in chat.history.messages
         assert not chat.history.messages
 
+        assert self.api.send_update(chat, self.api.get_me(), history_item, message=message) is None
+
     def test_create_bot(self):
         """Call create_bot must return user with is_bot == True."""
         assert self.api.create_bot('Test', 'test_bot').is_bot
