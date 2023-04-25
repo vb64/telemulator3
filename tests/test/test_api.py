@@ -139,3 +139,9 @@ f0ef73c5-54dd-40cf-9ee7-5c4cb764eb28
         date = datetime.now()
         self.telemul.api.custom_date = date
         assert self.telemul.api.get_date() == date
+
+    def test_get_me(self):
+        """Method get_me."""
+        bot = self.telemul.api.get_me()
+        assert bot.id == 1
+        assert self.telemul.api.get_me().id == 1
