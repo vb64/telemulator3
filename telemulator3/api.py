@@ -8,7 +8,7 @@ import importlib
 from time import mktime
 from datetime import datetime
 import httpretty
-# from telebot.types import Update as TeleUpdate
+from telebot.types import Update as TeleUpdate
 
 from .user import User
 
@@ -185,3 +185,59 @@ class Telegram:
             self.bot.id = self._me.id
 
         return self._me
+
+    def send_update(  # pylint: disable=too-many-arguments,too-many-locals
+      self, chat, from_user, history_item,
+      message=None, edited_message=None, channel_post=None, edited_channel_post=None,
+      inline_query=None, chosen_inline_result=None, callback_query=None,
+      shipping_query=None, pre_checkout_query=None, poll=None, poll_answer=None,
+      my_chat_member=None, chat_member=None, chat_join_request=None,
+    ):
+        """Create Update object and pass it to bot for processing.
+
+        Put update description, that passed in history_item parameter to appropriate chat history.
+        """
+        self.ids['update'] += 1
+
+        if chat:
+            item_id, item_body = history_item
+            chat.history.messages[item_id] = item_body
+
+        if callback_query:
+            self.callback_queries[callback_query.id] = callback_query
+
+        # filter out messages from tested bot
+        if from_user and (from_user.id == self.get_me().id):
+            return None
+
+        update = TeleUpdate(
+          self.ids['update'],
+          message, edited_message, channel_post, edited_channel_post, inline_query,
+          chosen_inline_result, callback_query, shipping_query, pre_checkout_query,
+          poll, poll_answer, my_chat_member, chat_member, chat_join_request
+        )
+        self.bot.process_new_updates([update])
+
+        return update
+
+    def create_user(self, first_name, last_name=None, username=None, language_code=None):
+        """Create new Telegram account."""
+        return User(
+          self,
+          False,
+          first_name,
+          last_name=last_name,
+          username=username,
+          language_code=language_code
+        )
+
+    def create_bot(self, first_name, username):
+        """Create new Telegram bot."""
+        return User(
+          self,
+          True,
+          first_name,
+          last_name=None,
+          username=username,
+          language_code=None
+        )
