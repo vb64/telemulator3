@@ -1,4 +1,4 @@
-"""Telemulator API support functions.
+"""Telemulator API methods support functions.
 
 make test T=test_method/test_init.py
 """
