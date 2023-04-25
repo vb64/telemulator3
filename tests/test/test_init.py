@@ -52,3 +52,11 @@ class TestInit(TestCase):
         user = self.api.create_user('New User')
         channel = self.telemul.create_channel("Test channel", user)
         assert len(channel.members) == 2
+
+    def test_call_query(self):
+        """Check call_query."""
+        assert self.telemul.call_query(self.teleuser, 'xxx-yyy', self.tele_message)
+
+    def test_tap_inline_button(self):
+        """Check tap_inline_button."""
+        assert self.telemul.tap_inline_button(self.teleuser, self.tele_message, 'xxx-yyy')
