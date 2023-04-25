@@ -9,10 +9,10 @@ from .member import ChatMember
 class Group(Chat):
     """Class, that represented of Telegram group."""
 
-    def __init__(self, creator, title, **kwargs):
+    def __init__(self, creator, title, start_message_id=0, **kwargs):
         """Create new group."""
-        super().__init__(
-          self, creator, Type.Group, title=title, **kwargs
+        Chat.__init__(
+          self, creator, Type.Group, start_message_id=start_message_id, title=title, **kwargs
         )
         self.members = {
           creator.id: ChatMember(

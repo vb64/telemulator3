@@ -19,7 +19,7 @@ class Chat(ChatBase):
             self.creator.api.ids['chat'] += 1
             chat_id = self.creator.api.ids['chat']
 
-        super().__init__(self, chat_id, chat_type, **kwargs)
+        ChatBase.__init__(self, chat_id, chat_type, **kwargs)
         self.message_id = start_message_id
         self.history = History(self)
         self.members = {}

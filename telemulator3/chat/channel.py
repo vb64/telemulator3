@@ -10,8 +10,8 @@ class Channel(Chat):
 
     def __init__(self, creator, title, start_message_id=0, **kwargs):
         """Create channel by user."""
-        super().__init__(
-          self, creator, Type.Channel, title=title, **kwargs
+        Chat.__init__(
+          self, creator, Type.Channel, start_message_id=start_message_id, title=title, **kwargs
         )
         self.signed_message = False
         self.members = {
