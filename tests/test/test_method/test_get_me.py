@@ -12,7 +12,7 @@ class TestGetMe(TestMethod):
         """Method call."""
         from telemulator3.method.getMe import response
 
-        code, data = response(self.telemul.api, '', {})
+        code, data = response(self.api, '', {})
         assert code == 200
         assert data["ok"]
         assert data["result"]["is_bot"]

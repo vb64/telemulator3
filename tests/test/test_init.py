@@ -23,3 +23,40 @@ class TestInit(TestCase):
         assert 'http_proxy' in os.environ
         self.telemul.clean_proxy()
         assert 'http_proxy' not in os.environ
+
+    def test_create_group(self):
+        """Check create_group call."""
+        group = self.telemul.create_group("Test group", self.teleuser)
+        assert len(group.members) == 1
+        assert self.teleuser.id in group.members
+        assert group.members[self.teleuser.id].can_invite_users
+
+        bot = self.api.get_me()
+        group = self.telemul.create_group("Test group", self.teleuser, members=[bot])
+        assert len(group.members) == 2
+        assert self.teleuser.id in group.members
+        assert bot.id in group.members
+
+        user = self.api.create_user('New User')
+        group = self.telemul.create_group("Test group", user, members=[bot])
+        assert len(group.members) == 2
+        assert user.id in group.members
+        assert bot.id in group.members
+        assert self.teleuser.id not in group.members
+
+    def test_create_channel(self):
+        """Test create_channel call."""
+        channel = self.telemul.create_channel("Test channel", self.teleuser, add_bot=False)
+        assert len(channel.members) == 1
+
+        user = self.api.create_user('New User')
+        channel = self.telemul.create_channel("Test channel", user)
+        assert len(channel.members) == 2
+
+    def test_call_query(self):
+        """Check call_query."""
+        assert self.telemul.call_query(self.teleuser, 'xxx-yyy', self.tele_message)
+
+    def test_tap_inline_button(self):
+        """Check tap_inline_button."""
+        assert self.telemul.tap_inline_button(self.teleuser, self.tele_message, 'xxx-yyy')

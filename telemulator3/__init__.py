@@ -45,3 +45,49 @@ class Telemulator:
         for proxy in ['https_proxy', 'http_proxy']:
             if proxy in os.environ:
                 del os.environ[proxy]
+
+    @staticmethod
+    def print_trace(is_on):
+        """Switch printing calls to Telegram API."""
+        from .api import debug_print
+        debug_print(is_on)
+
+    @staticmethod
+    def create_group(title, from_user, members=None):
+        """Create Telegram group and set it as supergroup."""
+        from .chat import Type
+
+        group = from_user.create_group(title)
+        group.type = Type.Supergroup
+        if members:
+            group.add_members(from_user, members)
+
+        return group
+
+    def create_channel(self, title, from_user, add_bot=True):
+        """Xreate Telegram channel and add bot to it as channel admin."""
+        channel = from_user.create_channel(title)
+        if add_bot:
+            channel.add_admin(from_user, self.api.bot)
+
+        return channel
+
+    def call_query(self, from_user, callback_data, message):
+        """Return CallbackQuery."""
+        from .update.callback_query import CallbackQuery
+
+        return CallbackQuery(from_user, callback_data, str(from_user.id), message)
+
+    def callback(self, message, from_user, callback_data):
+        """Emulate click on callback button on given message."""
+        callback_query = self.call_query(from_user, callback_data, message)
+        return self.api.send_update(
+          message.chat,
+          from_user,
+          (message.message_id, callback_query),
+          callback_query=callback_query
+        )
+
+    def tap_inline_button(self, user, message, button_code):
+        """Call callback with mnemonic."""
+        return self.callback(message, user, button_code)

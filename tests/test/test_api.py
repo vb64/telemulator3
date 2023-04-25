@@ -5,6 +5,8 @@ make test T=test_api.py
 import json
 from datetime import datetime
 import httpretty
+
+from telebot.types import Message
 from . import TestCase
 
 
@@ -31,26 +33,26 @@ class TestApi(TestCase):
 
     def test_emulate_file(self):
         """Function emulate_file."""
-        from telemulator3.api import emulate_file, debug_print
+        from telemulator3.api import emulate_file
 
-        func = emulate_file(self.telemul.api, httpretty.GET)
+        func = emulate_file(self.api, httpretty.GET)
         request = MockHttprettyRequest('z', path='data/test01.txt')
 
         answer = func(request, '', self.headers)
         assert answer[0] == 200
         assert answer[-1] == b'test content'
 
-        debug_print(True)
+        self.telemul.print_trace(True)
         answer = func(request, '', self.headers)
         assert answer[-1] == b'test content'
         assert answer[0] == 200
-        debug_print(False)
+        self.telemul.print_trace(False)
 
     def test_emulate_bot_post(self):
         """Emulate_bot with POST method."""
         from telemulator3.api import emulate_bot
 
-        func = emulate_bot(self.telemul.api, httpretty.POST)
+        func = emulate_bot(self.api, httpretty.POST)
         url = self.telemul.bot.token + '/{}'.format(self.method)
         request = MockHttprettyRequest(
           'zzz',
@@ -76,8 +78,8 @@ f0ef73c5-54dd-40cf-9ee7-5c4cb764eb28
         """Emulate_bot with GET method."""
         from telemulator3.api import emulate_bot, debug_print
 
-        self.telemul.api.answers[self.method] = (self.code, self.data)
-        func = emulate_bot(self.telemul.api, httpretty.GET)
+        self.api.answers[self.method] = (self.code, self.data)
+        func = emulate_bot(self.api, httpretty.GET)
 
         url = self.telemul.bot.token + '/{}?xxx'.format(self.method)
         assert func(MockHttprettyRequest('zzz'), url, self.headers) == self.answer
@@ -98,44 +100,77 @@ f0ef73c5-54dd-40cf-9ee7-5c4cb764eb28
 
     def test_get_file(self):
         """Method get_file must return 200 if custom_file_content set."""
-        save = self.telemul.api.file_store_path
-        self.telemul.api.file_store_path = None
+        save = self.api.file_store_path
+        self.api.file_store_path = None
 
-        code, data = self.telemul.api.get_file('not_exist')
+        code, data = self.api.get_file('not_exist')
         assert code == 200
         assert data == "file content stub"
 
-        self.telemul.api.custom_file_content = 'zzz'
-        code, data = self.telemul.api.get_file('not_exist')
+        self.api.custom_file_content = 'zzz'
+        code, data = self.api.get_file('not_exist')
         assert code == 200
         assert data == 'zzz'
-        self.telemul.api.custom_file_content = None
+        self.api.custom_file_content = None
 
-        self.telemul.api.file_store_path = save
+        self.api.file_store_path = save
 
-        code, data = self.telemul.api.get_file('not_exist')
+        code, data = self.api.get_file('not_exist')
         assert code == 400
         assert 'No such file or directory' in data
 
-        code, data = self.telemul.api.get_file('test01.txt')
+        code, data = self.api.get_file('test01.txt')
         assert code == 200
         assert 'test content' in data.decode('utf-8')
 
-        self.telemul.api.file_store_path = None
+        self.api.file_store_path = None
 
     def test_get_answer(self):
         """Method get_answer."""
-        code, data = self.telemul.api.get_answer('getMe', '', {})
+        code, data = self.api.get_answer('getMe', '', {})
         assert code == 200
         assert data['ok']
         assert data["result"]["is_bot"]
 
     def test_get_date_int(self):
         """Method get_date_int."""
-        assert self.telemul.api.get_date_int()
+        assert self.api.get_date_int()
 
     def test_get_date(self):
         """Method get_date."""
         date = datetime.now()
-        self.telemul.api.custom_date = date
-        assert self.telemul.api.get_date() == date
+        self.api.custom_date = date
+        assert self.api.get_date() == date
+
+    def test_get_me(self):
+        """Method get_me."""
+        bot = self.api.get_me()
+        assert bot.id == 1
+        assert self.api.get_me().id == 1
+
+    def test_send_update(self):
+        """Call for send_update must put history_item to the history of appropriate chat."""
+        user = self.api.create_user('Test')
+        chat = user.private()
+        message = Message(111, user, self.api.get_date(), chat, "json", {}, '')
+        history_item = (message.message_id, message)
+
+        self.api.send_update(chat, user, history_item, message=message)
+        assert message.message_id in chat.history.messages
+
+        chat.history.clear()
+
+        self.api.send_update(None, None, history_item, message=message)
+        assert message.message_id not in chat.history.messages
+        assert not chat.history.messages
+
+        assert self.api.send_update(chat, self.api.get_me(), history_item, message=message) is None
+
+        from telemulator3.update.callback_query import CallbackQuery
+
+        call = CallbackQuery(user, 'xxx', chat, message)
+        assert self.api.send_update(chat, user, history_item, message=message, callback_query=call)
+
+    def test_create_bot(self):
+        """Call create_bot must return user with is_bot == True."""
+        assert self.api.create_bot('Test', 'test_bot').is_bot

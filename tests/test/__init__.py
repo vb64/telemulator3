@@ -13,11 +13,6 @@ class Bot(telebot.TeleBot):
         self.name = 'Test bot'
         self.username = 'bot-username'
 
-    def process_new_updates(self, updates):
-        """Process Telegram API updates."""
-        for update in updates:
-            print('#', update)
-
 
 class TestCase(unittest.TestCase):
     """Inherit unittest."""
@@ -30,10 +25,25 @@ class TestCase(unittest.TestCase):
 
         self.telemul = Telemulator()
         self.telemul.set_tested_bot(Bot())
-        self.telemul.api.file_store_path = os.path.join('tests', 'file_store')
-        self.telemul.api.emulate_start()
+
+        self.api = self.telemul.api
+        self.api.file_store_path = os.path.join('tests', 'file_store')
+        self.api.emulate_start()
+
+        assert not self.api.users
+        assert self.api.get_me().username == self.api.bot.username
+        assert len(self.api.users) == 1
+
+        self.teleuser = self.api.create_user('Test', 'User', language_code='en')
+        self.private = self.teleuser.private()
+        self.group = self.teleuser.create_group("Test group")
+
+        from telemulator3.update.message import Text
+
+        self.tele_message = Text(self.private, self.teleuser, "Hello private!")
+        self.group_message = Text(self.group, self.teleuser, "Hello group!")
 
     def tearDown(self):
         """Clean."""
-        self.telemul.api.emulate_stop()
+        self.api.emulate_stop()
         super().tearDown()
