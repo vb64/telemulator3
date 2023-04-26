@@ -2,8 +2,8 @@
 
 make test T=test_method/test_answer_callback_query.py
 """
-# import pytest
-# from telebot.apihelper import ApiException
+import pytest
+from telebot.apihelper import ApiException
 from telebot.types import InlineKeyboardButton
 from . import TestMethod
 
@@ -39,15 +39,15 @@ class TestAnswerCallbackQuery(TestMethod):
         assert callback_query.from_user.id == user.id
 
         assert self.bot.answer_callback_query(callback_query.id, "Callback OK")
-        # assert len(user.notifications.messages) == 1
-        # user.notifications.dump()  # need for coverage
+        assert len(user.notifications.messages) == 1
+        user.notifications.dump()  # need for coverage
 
-        # assert self.bot.answer_callback_query(callback_query.id, "")
-        # assert len(user.notifications.messages) == 1
+        assert self.bot.answer_callback_query(callback_query.id, "")
+        assert len(user.notifications.messages) == 1
 
-        # callback_query.from_user = None
-        # assert self.bot.answer_callback_query(callback_query.id, "OK")
+        callback_query.from_user = None
+        assert self.bot.answer_callback_query(callback_query.id, "OK")
 
-        # with pytest.raises(ApiException) as err:
-        #     self.bot.answer_callback_query(666, "")
-        # assert "Wrong callback_query_id:" in str(err)
+        with pytest.raises(ApiException) as err:
+            self.bot.answer_callback_query(666, "")
+        assert "Wrong callback_query_id:" in str(err)

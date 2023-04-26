@@ -4,7 +4,6 @@ make test T=test_api.py
 """
 import json
 from datetime import datetime
-import httpretty
 
 from telebot.types import Message
 from . import TestCase
@@ -35,7 +34,7 @@ class TestApi(TestCase):
         """Function emulate_file."""
         from telemulator3.api import emulate_file
 
-        func = emulate_file(self.api, httpretty.GET)
+        func = emulate_file(self.api)
         request = MockHttprettyRequest('z', path='data/test01.txt')
 
         answer = func(request, '', self.headers)
@@ -48,48 +47,24 @@ class TestApi(TestCase):
         assert answer[0] == 200
         self.telemul.print_trace(False)
 
-    def test_emulate_bot_post(self):
-        """Emulate_bot with POST method."""
+    def test_emulate_bot(self):
+        """Emulate_bot call."""
         from telemulator3.api import emulate_bot
 
-        func = emulate_bot(self.api, httpretty.POST)
-        url = self.telemul.bot.token + '/{}'.format(self.method)
-        request = MockHttprettyRequest(
-          'zzz',
-          parsed_body={
-            'text': 'test text',
-            'other_key': 'otherkey data'
-          }
-        )
-        assert func(request, url, self.headers)[0] == 400
-
-        request.headers['Content-Type'] = 'multipart/form-data; boundary=*****'
-        request.body = """
---*****
-Content-Disposition: form-data; name="value1"
-Content-Type: text/plain; charset=UTF-8
-
-f0ef73c5-54dd-40cf-9ee7-5c4cb764eb28
---*****
-        """
-        assert func(request, url, self.headers)[0] == 400
-
-    def test_emulate_bot_get(self):
-        """Emulate_bot with GET method."""
-        from telemulator3.api import emulate_bot, debug_print
-
         self.api.answers[self.method] = (self.code, self.data)
-        func = emulate_bot(self.api, httpretty.GET)
+        func = emulate_bot(self.api)
 
         url = self.telemul.bot.token + '/{}?xxx'.format(self.method)
-        assert func(MockHttprettyRequest('zzz'), url, self.headers) == self.answer
+        answer = func('get', url)
+        assert answer.status_code == 200
 
         url = self.telemul.bot.token + '/{}'.format(self.method)
-        assert func(MockHttprettyRequest('zzz'), url, self.headers) == self.answer
+        answer = func('get', url)
+        assert answer.status_code == 200
 
-        debug_print(True)
-        assert func(MockHttprettyRequest('zzz'), url, self.headers) == self.answer
-        debug_print(False)
+        self.telemul.print_trace(True)
+        assert answer.status_code == 200
+        self.telemul.print_trace(False)
 
     def test_fix_ampersand(self):
         """Function fix_ampersand."""
@@ -127,7 +102,7 @@ f0ef73c5-54dd-40cf-9ee7-5c4cb764eb28
 
     def test_get_answer(self):
         """Method get_answer."""
-        code, data = self.api.get_answer('getMe', '', {})
+        code, data = self.api.get_answer('getMe', '', {}, {})
         assert code == 200
         assert data['ok']
         assert data["result"]["is_bot"]

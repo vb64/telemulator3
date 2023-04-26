@@ -12,7 +12,6 @@ Function must return tuple of 2 items:
 code - http response code
 data - dictionary of data for answer
 """
-import json
 from ..update import markup
 from .. import EmulatorException as ExceptionBase
 
@@ -41,16 +40,11 @@ def error(code, note):
 
 def get_chat(api, params):
     """Extract active chat from httpretty params."""
-    chat_id = params.get('chat_id', None)
+    chat_id = get_int(params, 'chat_id')
     if not chat_id:
         raise EmulatorException(400, "Wrong request: no chat_id")
 
-    try:
-        chat_id_int = int(chat_id[0])
-    except ValueError as err:
-        raise EmulatorException(401, "Wrong request: bad chat_id: {}".format(chat_id)) from err
-
-    chat = api.bot_chats.get(chat_id_int, None)
+    chat = api.bot_chats.get(chat_id, None)
     if not chat:
         raise EmulatorException(403, "Forbidden: bot was kicked from the chat")
 
@@ -59,11 +53,7 @@ def get_chat(api, params):
 
 def get(params, key):
     """Return key value from httpretty params."""
-    value = params.get(key, None)
-    if value:
-        return value[0]
-
-    return None
+    return params.get(key, None)
 
 
 def get_int(params, key):
@@ -77,11 +67,7 @@ def get_int(params, key):
 
 def get_json(params, key):
     """Return decoded json value for key from httpretty params."""
-    value = get(params, key)
-    if value is None:
-        return None
-
-    return json.loads(value)
+    return get(params, key)
 
 
 def message_to_dic(message):
