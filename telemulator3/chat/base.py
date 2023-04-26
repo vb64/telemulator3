@@ -1,13 +1,13 @@
 """Module for base class of all Telegram chats."""
-from telebot.types import Chat as ChatBase
+from telebot.types import Chat as ChatBase, Dictionaryable
 from .. import EmulatorException  # pylint: disable=cyclic-import
-
+from ..dictionaryable import attr_to_dic
 from . import Type
 from .history import History
 from .keyboard import Keyboard
 
 
-class Chat(ChatBase):
+class Chat(ChatBase, Dictionaryable):
     """Class, that represented common object of Telegram chat."""
 
     def __init__(self, creator, chat_type, start_message_id=0, **kwargs):
@@ -30,6 +30,16 @@ class Chat(ChatBase):
     def __str__(self):
         """As text."""
         return "{} '{}'".format(self.type, self.title)
+
+    def to_dict(self):
+        """Return dictionary for this class instanse."""
+        attr_list = [
+          'id', 'type', 'title', 'username', 'first_name', 'last_name',
+          'all_members_are_administrators', 'photo', 'description', 'invite_link',
+          'pinned_message', 'sticker_set_name', 'can_set_sticker_set',
+        ]
+
+        return attr_to_dic(self, attr_list)
 
     def check_can_write(self, user):
         """Raise exception in user not chat member."""
