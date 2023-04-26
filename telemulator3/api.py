@@ -51,6 +51,10 @@ def emulate_bot(api):
             method_name = method_name[:tmp]
 
         code, data = api.get_answer(method_name, uri, params, files)
+
+        if DEBUG_PRINT:
+            print("#{} return {} -> {}".format(method_name, code, data))
+
         return Result(code, data)
 
     return custom_request_sender

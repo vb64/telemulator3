@@ -12,6 +12,7 @@ Function must return tuple of 2 items:
 code - http response code
 data - dictionary of data for answer
 """
+import json
 from ..update import markup
 from .. import EmulatorException as ExceptionBase
 
@@ -54,6 +55,14 @@ def get_chat(api, params):
 def get(params, key):
     """Return key value from params."""
     return params.get(key, None)
+
+
+def get_json(params, key):
+    """Return key value from params as json."""
+    val = get(params, key)
+    if val is None:
+        return {}
+    return json.loads(val)
 
 
 def get_int(params, key):
