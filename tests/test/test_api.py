@@ -27,12 +27,10 @@ class TestApi(TestCase):
         assert answer.status_code == 200
 
         url = self.telemul.bot.token + '/{}'.format(self.method)
-        answer = func('get', url)
-        assert answer.status_code == 200
-
         self.telemul.print_trace(True)
-        assert answer.status_code == 200
+        answer = func('get', url)
         self.telemul.print_trace(False)
+        assert answer.status_code == 200
 
     def test_get_file(self):
         """Method get_file must return 200 if custom_file_content set."""
@@ -67,6 +65,11 @@ class TestApi(TestCase):
         assert code == 200
         assert data['ok']
         assert data["result"]["is_bot"]
+
+        code, data = self.api.get_answer('notExist', '', {}, {})
+        assert code == 200
+        assert not data['ok']
+        assert 'Wrong method name' in data['description']
 
     def test_get_date_int(self):
         """Method get_date_int."""
