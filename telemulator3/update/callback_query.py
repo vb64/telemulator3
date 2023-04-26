@@ -7,9 +7,8 @@ class CallbackQuery(CallbackQueryBase):
 
     def __init__(self, from_user, callback_data, chat_instance, message):
         """Create callback from user."""
-        from_user.api.ids['callback_query'] += 1
-        callback_id = from_user.api.ids['callback_query']
-
+        api = from_user.api
+        callback_id = api.new_id(api.EntityCallback)
         CallbackQueryBase.__init__(self, callback_id, from_user, callback_data, chat_instance, message)
         from_user.api.callback_queries[callback_id] = self
 

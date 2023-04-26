@@ -16,15 +16,14 @@ class User(types.User):
 
     def __init__(self, api, is_bot, first_name, **kwargs):
         """Create new API bot."""
+        types.User.__init__(self, api.new_id(api.EntityUser), is_bot, first_name, **kwargs)
+        api.users[self.id] = self
         self.api = api
-        self.api.ids['user'] += 1
-        types.User.__init__(self, self.api.ids['user'], is_bot, first_name, **kwargs)
-        self.api.users[self.id] = self
         self.notifications = History(self)
 
     def __str__(self):
         """As text."""
-        return self.full_name
+        return "{} (ID {})".format(self.full_name, self.id)
 
     @classmethod
     def from_bot(cls, api):

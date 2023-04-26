@@ -3,6 +3,7 @@ import os
 import importlib
 from time import mktime
 from datetime import datetime
+import threading
 from telebot.types import Update as TeleUpdate
 
 from .user import User
@@ -62,6 +63,12 @@ class Telegram:
     because private chats has same id as users and saved in one dictionary with other chat id's
     """
 
+    # Types of available entities.
+    EntityUpdate = 'update'
+    EntityUser = 'user'
+    EntityChat = 'chat'
+    EntityCallback = 'callback_query'
+
     def __init__(  # pylint: disable=too-many-arguments
       self,
       bot,
@@ -83,17 +90,28 @@ class Telegram:
         self.users = {}
         self.chats = {}
         self.callback_queries = {}
-        self.ids = {
-          'update': start_update_id,
-          'user': start_user_id,
-          'chat': start_chat_id,
-          'callback_query': start_callback_query_id,
+
+        self._ids = {
+          self.EntityUpdate: start_update_id,
+          self.EntityUser: start_user_id,
+          self.EntityChat: start_chat_id,
+          self.EntityCallback: start_callback_query_id,
         }
+
         self.answers = {}
         self.bot_chats = {}
 
         from telebot import apihelper
         apihelper.CUSTOM_REQUEST_SENDER = emulate_bot(self)
+
+    def new_id(self, type_name):
+        """Create new ID for given type."""
+        lock = threading.Lock()
+        with lock:
+            self._ids[type_name] += 1
+            result = self._ids[type_name]
+
+        return result
 
     def get_answer(self, method_name, uri, params, _files):
         """Return response code and answer for request by method_name."""
@@ -157,8 +175,6 @@ class Telegram:
 
         Put update description, that passed in history_item parameter to appropriate chat history.
         """
-        self.ids['update'] += 1
-
         if chat:
             item_id, item_body = history_item
             chat.history.messages[item_id] = item_body
@@ -168,7 +184,7 @@ class Telegram:
             return None
 
         update = TeleUpdate(
-          self.ids['update'],
+          self.new_id(self.EntityUpdate),
           message, edited_message, channel_post, edited_channel_post, inline_query,
           chosen_inline_result, callback_query, shipping_query, pre_checkout_query,
           poll, poll_answer, my_chat_member, chat_member, chat_join_request

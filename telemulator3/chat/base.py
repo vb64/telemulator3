@@ -13,11 +13,10 @@ class Chat(ChatBase, Dictionaryable):
     def __init__(self, creator, chat_type, start_message_id=0, **kwargs):
         """Create new chat."""
         self.creator = creator
-        if chat_type == Type.Private:
-            chat_id = self.creator.id
-        else:
-            self.creator.api.ids['chat'] += 1
-            chat_id = self.creator.api.ids['chat']
+        chat_id = self.creator.id
+        if chat_type != Type.Private:
+            api = self.creator.api
+            chat_id = api.new_id(api.EntityChat)
 
         ChatBase.__init__(self, chat_id, chat_type, **kwargs)
         self.message_id = start_message_id
