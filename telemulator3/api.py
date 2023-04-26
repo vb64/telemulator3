@@ -163,9 +163,6 @@ class Telegram:
             item_id, item_body = history_item
             chat.history.messages[item_id] = item_body
 
-        if callback_query:
-            self.callback_queries[callback_query.id] = callback_query
-
         # filter out messages from tested bot
         if from_user and (from_user.id == self.get_me().id):
             return None
