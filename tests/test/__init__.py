@@ -27,8 +27,8 @@ class TestCase(unittest.TestCase):
         self.telemul.set_tested_bot(Bot())
 
         self.api = self.telemul.api
+        self.bot = self.api.bot
         self.api.file_store_path = os.path.join('tests', 'file_store')
-        self.api.emulate_start()
 
         assert not self.api.users
         assert self.api.get_me().username == self.api.bot.username
@@ -42,8 +42,3 @@ class TestCase(unittest.TestCase):
 
         self.tele_message = Text(self.private, self.teleuser, "Hello private!")
         self.group_message = Text(self.group, self.teleuser, "Hello group!")
-
-    def tearDown(self):
-        """Clean."""
-        self.api.emulate_stop()
-        super().tearDown()

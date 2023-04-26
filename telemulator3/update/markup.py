@@ -44,6 +44,15 @@ class InlineKeyboard(InlineKeyboardMarkup):
         InlineKeyboardMarkup.__init__(self)
         self.parent_message = None
 
+    @classmethod
+    def de_json(cls, json_string):
+        """Convert from json to class instanse."""
+        obj = cls.check_json(json_string)
+        cls_obj = cls()
+        cls_obj.keyboard = obj.get('inline_keyboard', [])
+
+        return cls_obj
+
     def attach(self, message):
         """Attach this inline keyboard to message instanse."""
         self.parent_message = message
@@ -60,7 +69,7 @@ class InlineKeyboard(InlineKeyboardMarkup):
 
     def tap(self, from_user, col, row=0):
         """User tap inline button."""
-        button = self.keyboard[row][col]
+        button = self.keyboard[row][col].to_dict()
 
         if 'url' in button:
             if self.parent_message:

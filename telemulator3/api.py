@@ -1,19 +1,14 @@
 """Telegram messenger Bot API emulator."""
 import os
-import re
-from io import BytesIO
-import cgi
-import json
 import importlib
 from time import mktime
 from datetime import datetime
-import httpretty
+import threading
 from telebot.types import Update as TeleUpdate
 
 from .user import User
 
 DEBUG_PRINT = False
-HTTPRETTY_AMPERSAND = '_httpretty_amp_'
 PACKAGE_PREFIX = os.path.basename(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -23,62 +18,42 @@ def debug_print(is_on):
     DEBUG_PRINT = is_on
 
 
-def fix_ampersand(text_list):
-    """Replace apihelper.HTTPRETTY_AMPERSAND with '&' in each string in list."""
-    return [i.replace(HTTPRETTY_AMPERSAND, '&') for i in text_list]
+class Result:
+    """Valid object for telebot.apihelper._check_result call."""
+
+    def __init__(self, code, data):
+        """Create with eercode and data.
+
+        If data['ok'] == False, data must contain keys: 'error_code', 'description'.
+        """
+        self.status_code = code
+        self.data = data
+        self.reason = 'Test reason'
+        self.text = 'Test description'
+
+    def json(self):
+        """Return data."""
+        return self.data
 
 
-def emulate_bot(api, http_method):
-    """Return decorator that emulate Telegram Bot API call."""
-    def decorator(request, uri, headers):
-        """Return code and body of answer to Telegram Bot API call."""
-        params = request.querystring
-        # https://httpretty.readthedocs.io/en/latest/api.html
-        # https://stackoverflow.com/questions/25645253/python-parsing-multipart-form-data-request-on-server-side
-        # https://stackoverflow.com/questions/34326150/multipartparsererror-invalid-boundary
-        # https://www.programcreek.com/python/example/6138/cgi.parse_multipart
-        if http_method == 'POST':
-            params = request.parsed_body
-            if 'boundary=' in request.headers.get('Content-Type', ''):
-                _ctype, pdict = cgi.parse_header(request.headers['Content-Type'])
-                params = cgi.parse_multipart(
-                  BytesIO(request.body.encode('utf-8')),
-                  {i: j.encode('utf-8') for i, j in pdict.items()}
-                )
-
-            for key in params:
-                if key in ['text', 'reply_markup']:
-                    params[key] = fix_ampersand(params[key])
-
+def emulate_bot(api):
+    """Return handler that emulate telebot.apihelper._make_request call."""
+    def custom_request_sender(method, uri, params=None, files=None, timeout=None, proxies=None):
+        """Return object valid for telebot.apihelper._check_result call."""
         if DEBUG_PRINT:
-            print("#{} -> {}".format(http_method, uri))
+            print("#{} -> {} timeout {} proxies {}".format(method, uri, timeout, proxies))
             print("#params -> {}".format(params))
+            print("#files -> {}".format(files))
 
         method_name = uri[uri.index(api.bot.token) + len(api.bot.token) + 1:]
         tmp = method_name.find('?')
         if tmp > 0:
             method_name = method_name[:tmp]
 
-        code, data = api.get_answer(method_name, uri, params)
-        return (code, headers, json.dumps(data))
+        code, data = api.get_answer(method_name, uri, params, files)
+        return Result(code, data)
 
-    return decorator
-
-
-def emulate_file(api, http_method):
-    """Return decorator that emulate Telegram File API call."""
-    def decorator(request, uri, headers):
-        """Return code and body of file to Telegram File API call."""
-        if DEBUG_PRINT:
-            print("#{} -> {}".format(http_method, uri))
-
-        # print "##", request.path, request.body
-        file_name = request.path.split('/')[-1]
-        code, data = api.get_file(file_name)
-
-        return (code, headers, data)
-
-    return decorator
+    return custom_request_sender
 
 
 class Telegram:
@@ -87,6 +62,12 @@ class Telegram:
     Parameters start_user_id and start_chat id must be significantly differs,
     because private chats has same id as users and saved in one dictionary with other chat id's
     """
+
+    # Types of available entities.
+    EntityUpdate = 'update'
+    EntityUser = 'user'
+    EntityChat = 'chat'
+    EntityCallback = 'callback_query'
 
     def __init__(  # pylint: disable=too-many-arguments
       self,
@@ -109,23 +90,30 @@ class Telegram:
         self.users = {}
         self.chats = {}
         self.callback_queries = {}
-        self.ids = {
-          'update': start_update_id,
-          'user': start_user_id,
-          'chat': start_chat_id,
-          'callback_query': start_callback_query_id,
+
+        self._ids = {
+          self.EntityUpdate: start_update_id,
+          self.EntityUser: start_user_id,
+          self.EntityChat: start_chat_id,
+          self.EntityCallback: start_callback_query_id,
         }
+
         self.answers = {}
         self.bot_chats = {}
 
-        url_bot = re.compile('https://api.telegram.org/bot.*')
-        url_file = re.compile('https://api.telegram.org/file/bot.*')
+        from telebot import apihelper
+        apihelper.CUSTOM_REQUEST_SENDER = emulate_bot(self)
 
-        for method in [httpretty.GET, httpretty.POST]:
-            httpretty.register_uri(method, url_bot, body=emulate_bot(self, method))
-            httpretty.register_uri(method, url_file, body=emulate_file(self, method))
+    def new_id(self, type_name):
+        """Create new ID for given type."""
+        lock = threading.Lock()
+        with lock:
+            self._ids[type_name] += 1
+            result = self._ids[type_name]
 
-    def get_answer(self, method_name, uri, params):
+        return result
+
+    def get_answer(self, method_name, uri, params, _files):
         """Return response code and answer for request by method_name."""
         if method_name in self.answers:
             code, data = self.answers[method_name]
@@ -135,7 +123,7 @@ class Telegram:
             method = importlib.import_module(PACKAGE_PREFIX + ".method." + method_name)
             code, data = method.response(self, uri, params)
         except ImportError:
-            code = 400
+            code = 200
             data = {
               "ok": False,
               "error_code": 400,
@@ -168,16 +156,6 @@ class Telegram:
         """Return current or emulated date as unix time (integer)."""
         return mktime(self.get_date().timetuple())
 
-    @staticmethod
-    def emulate_start():
-        """Trap calls to Telegram."""
-        httpretty.enable()
-
-    @staticmethod
-    def emulate_stop():
-        """Don't trap calls to Telegram."""
-        httpretty.disable()
-
     def get_me(self):
         """Create and put to active users list instanse of the tested bot."""
         if not self._me:
@@ -197,21 +175,16 @@ class Telegram:
 
         Put update description, that passed in history_item parameter to appropriate chat history.
         """
-        self.ids['update'] += 1
-
         if chat:
             item_id, item_body = history_item
             chat.history.messages[item_id] = item_body
-
-        if callback_query:
-            self.callback_queries[callback_query.id] = callback_query
 
         # filter out messages from tested bot
         if from_user and (from_user.id == self.get_me().id):
             return None
 
         update = TeleUpdate(
-          self.ids['update'],
+          self.new_id(self.EntityUpdate),
           message, edited_message, channel_post, edited_channel_post, inline_query,
           chosen_inline_result, callback_query, shipping_query, pre_checkout_query,
           poll, poll_answer, my_chat_member, chat_member, chat_join_request

@@ -12,7 +12,6 @@ Function must return tuple of 2 items:
 code - http response code
 data - dictionary of data for answer
 """
-import json
 from ..update import markup
 from .. import EmulatorException as ExceptionBase
 
@@ -40,17 +39,12 @@ def error(code, note):
 
 
 def get_chat(api, params):
-    """Extract active chat from httpretty params."""
-    chat_id = params.get('chat_id', None)
+    """Extract chat from params."""
+    chat_id = get_int(params, 'chat_id')
     if not chat_id:
         raise EmulatorException(400, "Wrong request: no chat_id")
 
-    try:
-        chat_id_int = int(chat_id[0])
-    except ValueError as err:
-        raise EmulatorException(401, "Wrong request: bad chat_id: {}".format(chat_id)) from err
-
-    chat = api.bot_chats.get(chat_id_int, None)
+    chat = api.bot_chats.get(chat_id, None)
     if not chat:
         raise EmulatorException(403, "Forbidden: bot was kicked from the chat")
 
@@ -58,30 +52,17 @@ def get_chat(api, params):
 
 
 def get(params, key):
-    """Return key value from httpretty params."""
-    value = params.get(key, None)
-    if value:
-        return value[0]
-
-    return None
+    """Return key value from params."""
+    return params.get(key, None)
 
 
 def get_int(params, key):
-    """Return key value from httpretty params as integer."""
+    """Return key value from params as integer."""
     value = get(params, key)
     if value is None:
         return None
 
     return int(value)
-
-
-def get_json(params, key):
-    """Return decoded json value for key from httpretty params."""
-    value = get(params, key)
-    if value is None:
-        return None
-
-    return json.loads(value)
 
 
 def message_to_dic(message):
@@ -95,10 +76,10 @@ def message_to_dic(message):
 def message_for_chat(func):
     """Decorate methods, that receive chat ID and produce message in response."""
     def decorator(api, _uri, params):
-        """Extract active chat from httpretty params, return OK message from handler response."""
+        """Extract chat from params, return OK message from handler response."""
         reply_to_message_id = get_int(params, 'reply_to_message_id')
         reply_to_message = None
-        reply_markup = markup.from_dict(get_json(params, 'reply_markup'))
+        reply_markup = markup.from_dict(get(params, 'reply_markup'))
 
         try:
             chat = get_chat(api, params)
@@ -125,7 +106,7 @@ def message_for_chat(func):
 def with_chat(func):
     """Decorate methods, that receive chat ID and return OK response of decorated function."""
     def decorator(api, _uri, params):
-        """Extract active chat from httpretty params, return OK response of decorated function."""
+        """Extract chat from params, return OK response of decorated function."""
         try:
             chat = get_chat(api, params)
         except EmulatorException as err:
