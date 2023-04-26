@@ -39,7 +39,7 @@ def error(code, note):
 
 
 def get_chat(api, params):
-    """Extract active chat from httpretty params."""
+    """Extract chat from params."""
     chat_id = get_int(params, 'chat_id')
     if not chat_id:
         raise EmulatorException(400, "Wrong request: no chat_id")
@@ -52,22 +52,17 @@ def get_chat(api, params):
 
 
 def get(params, key):
-    """Return key value from httpretty params."""
+    """Return key value from params."""
     return params.get(key, None)
 
 
 def get_int(params, key):
-    """Return key value from httpretty params as integer."""
+    """Return key value from params as integer."""
     value = get(params, key)
     if value is None:
         return None
 
     return int(value)
-
-
-def get_json(params, key):
-    """Return decoded json value for key from httpretty params."""
-    return get(params, key)
 
 
 def message_to_dic(message):
@@ -81,10 +76,10 @@ def message_to_dic(message):
 def message_for_chat(func):
     """Decorate methods, that receive chat ID and produce message in response."""
     def decorator(api, _uri, params):
-        """Extract active chat from httpretty params, return OK message from handler response."""
+        """Extract chat from params, return OK message from handler response."""
         reply_to_message_id = get_int(params, 'reply_to_message_id')
         reply_to_message = None
-        reply_markup = markup.from_dict(get_json(params, 'reply_markup'))
+        reply_markup = markup.from_dict(get(params, 'reply_markup'))
 
         try:
             chat = get_chat(api, params)
@@ -111,7 +106,7 @@ def message_for_chat(func):
 def with_chat(func):
     """Decorate methods, that receive chat ID and return OK response of decorated function."""
     def decorator(api, _uri, params):
-        """Extract active chat from httpretty params, return OK response of decorated function."""
+        """Extract chat from params, return OK response of decorated function."""
         try:
             chat = get_chat(api, params)
         except EmulatorException as err:
