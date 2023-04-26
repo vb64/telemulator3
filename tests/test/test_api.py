@@ -30,23 +30,6 @@ class TestApi(TestCase):
     headers = {}
     answer = (code, headers, json.dumps(data))
 
-    def test_emulate_file(self):
-        """Function emulate_file."""
-        from telemulator3.api import emulate_file
-
-        func = emulate_file(self.api)
-        request = MockHttprettyRequest('z', path='data/test01.txt')
-
-        answer = func(request, '', self.headers)
-        assert answer[0] == 200
-        assert answer[-1] == b'test content'
-
-        self.telemul.print_trace(True)
-        answer = func(request, '', self.headers)
-        assert answer[-1] == b'test content'
-        assert answer[0] == 200
-        self.telemul.print_trace(False)
-
     def test_emulate_bot(self):
         """Emulate_bot call."""
         from telemulator3.api import emulate_bot
@@ -65,13 +48,6 @@ class TestApi(TestCase):
         self.telemul.print_trace(True)
         assert answer.status_code == 200
         self.telemul.print_trace(False)
-
-    def test_fix_ampersand(self):
-        """Function fix_ampersand."""
-        from telemulator3.api import HTTPRETTY_AMPERSAND, fix_ampersand
-
-        assert fix_ampersand(['1' + HTTPRETTY_AMPERSAND + '2']) == ['1&2']
-        assert fix_ampersand(['123']) == ['123']
 
     def test_get_file(self):
         """Method get_file must return 200 if custom_file_content set."""

@@ -8,7 +8,6 @@ from telebot.types import Update as TeleUpdate
 from .user import User
 
 DEBUG_PRINT = False
-HTTPRETTY_AMPERSAND = '_httpretty_amp_'
 PACKAGE_PREFIX = os.path.basename(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -16,11 +15,6 @@ def debug_print(is_on):
     """Switch printing calls to Telegram API."""
     global DEBUG_PRINT  # pylint: disable=global-statement
     DEBUG_PRINT = is_on
-
-
-def fix_ampersand(text_list):
-    """Replace apihelper.HTTPRETTY_AMPERSAND with '&' in each string in list."""
-    return [i.replace(HTTPRETTY_AMPERSAND, '&') for i in text_list]
 
 
 class Result:
@@ -59,22 +53,6 @@ def emulate_bot(api):
         return Result(code, data)
 
     return custom_request_sender
-
-
-def emulate_file(api):
-    """Return decorator that emulate Telegram File API call."""
-    def decorator(request, uri, headers):
-        """Return code and body of file to Telegram File API call."""
-        if DEBUG_PRINT:
-            print("#{} -> {}".format('file', uri))
-
-        # print "##", request.path, request.body
-        file_name = request.path.split('/')[-1]
-        code, data = api.get_file(file_name)
-
-        return (code, headers, data)
-
-    return decorator
 
 
 class Telegram:
