@@ -65,6 +65,11 @@ def get_json(params, key):
     return json.loads(val)
 
 
+def get_reply_markup(params):
+    """Return 'reply_markup' key value from params as json."""
+    return get_json(params, 'reply_markup')
+
+
 def get_int(params, key):
     """Return key value from params as integer."""
     value = get(params, key)
@@ -88,7 +93,7 @@ def message_for_chat(func):
         """Extract chat from params, return OK message from handler response."""
         reply_to_message_id = get_int(params, 'reply_to_message_id')
         reply_to_message = None
-        reply_markup = markup.from_dict(get(params, 'reply_markup'))
+        reply_markup = markup.from_dict(get_reply_markup(params))
 
         try:
             chat = get_chat(api, params)
