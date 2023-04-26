@@ -2,23 +2,10 @@
 
 make test T=test_api.py
 """
-import json
 from datetime import datetime
 
 from telebot.types import Message
 from . import TestCase
-
-
-class MockHttprettyRequest:
-    """Mock httpretty request."""
-
-    def __init__(self, querystring, parsed_body=None, headers=None, body='', path=''):
-        """Set querystring property."""
-        self.querystring = querystring
-        self.parsed_body = parsed_body or {}
-        self.headers = headers or {}
-        self.body = body
-        self.path = path
 
 
 class TestApi(TestCase):
@@ -27,8 +14,6 @@ class TestApi(TestCase):
     method = 'testMethod'
     code = 200
     data = 'testMethodData'
-    headers = {}
-    answer = (code, headers, json.dumps(data))
 
     def test_emulate_bot(self):
         """Emulate_bot call."""
