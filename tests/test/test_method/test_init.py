@@ -30,3 +30,13 @@ class TestInit(TestMethod):
         with pytest.raises(EmulatorException) as err:
             get_chat(self.api, {'chat_id': 666})
         assert "Forbidden:" in str(err)
+
+    def test_with_chat(self):
+        """Check with_chat decorator."""
+        from telemulator3.method import with_chat
+
+        deco = with_chat(None)
+        code, data = deco(None, '', {})
+        assert code == 400
+        assert data['ok'] is False
+        assert 'no chat_id' in data['description']
