@@ -12,6 +12,7 @@ Function must return tuple of 2 items:
 code - http response code
 data - dictionary of data for answer
 """
+import json
 from ..update import markup
 from .. import EmulatorException as ExceptionBase
 
@@ -56,6 +57,19 @@ def get(params, key):
     return params.get(key, None)
 
 
+def get_json(params, key):
+    """Return key value from params as json."""
+    val = get(params, key)
+    if val is None:
+        return {}
+    return json.loads(val)
+
+
+def get_reply_markup(params):
+    """Return 'reply_markup' key value from params as json."""
+    return get_json(params, 'reply_markup')
+
+
 def get_int(params, key):
     """Return key value from params as integer."""
     value = get(params, key)
@@ -79,7 +93,7 @@ def message_for_chat(func):
         """Extract chat from params, return OK message from handler response."""
         reply_to_message_id = get_int(params, 'reply_to_message_id')
         reply_to_message = None
-        reply_markup = markup.from_dict(get(params, 'reply_markup'))
+        reply_markup = markup.from_dict(get_reply_markup(params))
 
         try:
             chat = get_chat(api, params)
