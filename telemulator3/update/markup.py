@@ -39,19 +39,10 @@ def dump_inline_button(button_dict):
 class InlineKeyboard(InlineKeyboardMarkup):
     """Construct and return types.InlineKeyboardMarkup from the given dictionary."""
 
-    def __init__(self):
+    def __init__(self, keyboard=None):
         """Create inline keyboard."""
-        InlineKeyboardMarkup.__init__(self)
+        InlineKeyboardMarkup.__init__(self, keyboard=keyboard)
         self.parent_message = None
-
-    @classmethod
-    def de_json(cls, json_string):
-        """Convert from json to class instanse."""
-        obj = cls.check_json(json_string)
-        cls_obj = cls()
-        cls_obj.keyboard = obj.get('inline_keyboard', [])
-
-        return cls_obj
 
     def attach(self, message):
         """Attach this inline keyboard to message instanse."""
@@ -63,7 +54,7 @@ class InlineKeyboard(InlineKeyboardMarkup):
         ret = "\n----------"
         for row in self.keyboard:
             for col in row:
-                ret += dump_inline_button(col)
+                ret += dump_inline_button(col.to_dict())
 
         return ret
 
