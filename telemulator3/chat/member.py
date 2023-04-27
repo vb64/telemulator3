@@ -1,8 +1,9 @@
 """Module for class, that represented Telegram chat member."""
-from telebot.types import ChatMember as ChatMemberBase
+from telebot.types import ChatMember as ChatMemberBase, Dictionaryable
+from ..dictionaryable import attr_to_dic
 
 
-class ChatMember(ChatMemberBase):
+class ChatMember(ChatMemberBase, Dictionaryable):
     """Telegram chat member class."""
 
     def __init__(  # pylint: disable=too-many-arguments,too-many-locals
@@ -76,3 +77,16 @@ class ChatMember(ChatMemberBase):
           can_send_other_messages,
           can_add_web_page_previews
         )
+
+    def to_dict(self):
+        """Return dictionary for ChatMember class instanse."""
+        attr_list = [
+          'user', 'status', 'custom_title', 'is_anonymous', 'can_be_edited', 'can_post_messages', 'can_edit_messages',
+          'can_delete_messages', 'can_restrict_members', 'can_promote_members', 'can_change_info', 'can_invite_users',
+          'can_pin_messages', 'is_member', 'can_send_messages', 'can_send_polls', 'can_send_other_messages',
+          'can_add_web_page_previews', 'can_manage_chat', 'can_manage_video_chats', 'can_manage_voice_chats',
+          'until_date', 'can_manage_topics', 'can_send_audios', 'can_send_documents', 'can_send_photos',
+          'can_send_videos', 'can_send_video_notes', 'can_send_voice_notes',
+        ]
+
+        return attr_to_dic(self, attr_list)
