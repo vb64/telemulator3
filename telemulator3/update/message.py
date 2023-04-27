@@ -156,6 +156,18 @@ class Voice(Message):
         )
 
 
+class AudioDict(AudioBase, Dictionaryable):
+    """Dictionaryable AudioBase class."""
+
+    def to_dict(self):
+        """Return dictionary for Audio instanse."""
+        attr_list = [
+          'file_id', 'file_unique_id', 'duration', 'performer', 'title',
+          'file_name', 'mime_type', 'file_size', 'thumbnail',
+        ]
+        return attr_to_dic(self, attr_list)
+
+
 class Audio(Message):
     """Audio sended to chat."""
 
@@ -167,7 +179,7 @@ class Audio(Message):
         Message.__init__(
           self, chat, from_user,
           content_type='audio',
-          audio=AudioBase(
+          audio=AudioDict(
             file_id, file_id, duration,
             performer=performer, title=title, mime_type='audio/mp3', file_size=file_size
           ),
