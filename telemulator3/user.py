@@ -1,5 +1,5 @@
 """Module for class, that represented Telegram account."""
-from telebot import types
+from telebot.types import User as UserBase
 
 from . import EmulatorException  # pylint: disable=cyclic-import
 from .update.message import LeftChatMember, Text
@@ -11,12 +11,12 @@ from .chat.channel import Channel
 from .chat.history import History
 
 
-class User(types.User):
+class User(UserBase):
     """Class, that represented Telegram account."""
 
     def __init__(self, api, is_bot, first_name, **kwargs):
         """Create new API bot."""
-        types.User.__init__(self, api.new_id(api.EntityUser), is_bot, first_name, **kwargs)
+        UserBase.__init__(self, api.new_id(api.EntityUser), is_bot, first_name, **kwargs)
         api.users[self.id] = self
         self.api = api
         self.notifications = History(self)

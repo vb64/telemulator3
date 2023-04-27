@@ -2,13 +2,23 @@
 from telebot.types import (
   Message as MessageBase, MessageEntity, PhotoSize as PhotoSizeBase, Audio as AudioBase,
   Document as DocumentBase, Contact as ContactBase, Voice as VoiceBase,
-  Dictionaryable,
 )
-from ..dictionaryable import attr_to_dic
+from ..dictionaryable import Dictionaryable
 
 
 class Message(MessageBase, Dictionaryable):
     """Base class with message_id generator."""
+
+    attr_list = [
+      'message_id', 'date', 'chat', 'content_type', 'forward_from', 'forward_from_chat',
+      'forward_from_message_id', 'forward_signature', 'forward_date', 'reply_to_message',
+      'edit_date', 'media_group_id', 'author_signature', 'text', 'entities', 'caption_entities',
+      'audio', 'document', 'game', 'photo', 'sticker', 'video', 'video_note', 'voice', 'caption',
+      'contact', 'location', 'venue', 'new_chat_member', 'left_chat_member', 'new_chat_title',
+      'new_chat_photo', 'delete_chat_photo', 'group_chat_created', 'supergroup_chat_created',
+      'channel_chat_created', 'migrate_to_chat_id', 'migrate_from_chat_id', 'pinned_message',
+      'invoice', 'successful_payment', 'connected_website', 'new_chat_members',
+    ]
 
     def __init__(self, chat, from_user, content_type='text', **kwargs):
         """Create message."""
@@ -44,18 +54,7 @@ class Message(MessageBase, Dictionaryable):
 
     def to_dict(self):
         """Return dictionary for this class instanse."""
-        attr_list = [
-          'message_id', 'date', 'chat', 'content_type', 'forward_from', 'forward_from_chat',
-          'forward_from_message_id', 'forward_signature', 'forward_date', 'reply_to_message',
-          'edit_date', 'media_group_id', 'author_signature', 'text', 'entities', 'caption_entities',
-          'audio', 'document', 'game', 'photo', 'sticker', 'video', 'video_note', 'voice', 'caption',
-          'contact', 'location', 'venue', 'new_chat_member', 'left_chat_member', 'new_chat_title',
-          'new_chat_photo', 'delete_chat_photo', 'group_chat_created', 'supergroup_chat_created',
-          'channel_chat_created', 'migrate_to_chat_id', 'migrate_from_chat_id', 'pinned_message',
-          'invoice', 'successful_payment', 'connected_website', 'new_chat_members',
-        ]
-
-        data = attr_to_dic(self, attr_list)
+        data = Dictionaryable.to_dict(self)
         if self.from_user:
             data['from'] = self.from_user.to_dict()
         if self.new_chat_members:
@@ -99,10 +98,7 @@ class Command(Text):
 class PhotoSize(PhotoSizeBase, Dictionaryable):
     """Dictionaryable PhotoSize class."""
 
-    def to_dict(self):
-        """Return dictionary for PhotoSize instanse."""
-        attr_list = ['file_id', 'file_unique_id', 'width', 'height', 'file_size']
-        return attr_to_dic(self, attr_list)
+    attr_list = ['file_id', 'file_unique_id', 'width', 'height', 'file_size']
 
 
 class Photo(Message):
@@ -159,13 +155,10 @@ class Voice(Message):
 class AudioDict(AudioBase, Dictionaryable):
     """Dictionaryable AudioBase class."""
 
-    def to_dict(self):
-        """Return dictionary for Audio instanse."""
-        attr_list = [
-          'file_id', 'file_unique_id', 'duration', 'performer', 'title',
-          'file_name', 'mime_type', 'file_size', 'thumbnail',
-        ]
-        return attr_to_dic(self, attr_list)
+    attr_list = [
+      'file_id', 'file_unique_id', 'duration', 'performer', 'title',
+      'file_name', 'mime_type', 'file_size', 'thumbnail',
+    ]
 
 
 class Audio(Message):
@@ -200,13 +193,10 @@ class Audio(Message):
 class DocumentDict(DocumentBase, Dictionaryable):
     """Dictionaryable DocumentBase class."""
 
-    def to_dict(self):
-        """Return dictionary for Audio instanse."""
-        attr_list = [
-          'file_id', 'file_unique_id', 'thumbnail', 'file_name',
-          'mime_type', 'file_size',
-        ]
-        return attr_to_dic(self, attr_list)
+    attr_list = [
+      'file_id', 'file_unique_id', 'thumbnail', 'file_name',
+      'mime_type', 'file_size',
+    ]
 
 
 class Document(Message):
