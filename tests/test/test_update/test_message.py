@@ -75,3 +75,10 @@ class TestMessage(TestUpdate):
         from telemulator3.update.message import NewChatMembers
         msg = NewChatMembers(self.private, None, [])
         assert 'joined by invite link:' in str(msg)
+
+    def test_left_chat_member(self):
+        """Test LeftChatMember message."""
+        from telemulator3.update.message import LeftChatMember
+
+        msg = LeftChatMember(self.private, self.bot)
+        assert 'left chat' in str(msg)
