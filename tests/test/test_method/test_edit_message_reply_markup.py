@@ -1,4 +1,4 @@
-"""Telemulator API DeleteMessage method.
+"""Telemulator API EditMessageReplyMarkup method.
 
 make test T=test_method/test_edit_message_reply_markup.py
 """
