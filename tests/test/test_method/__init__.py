@@ -3,7 +3,7 @@ from .. import TestCase
 
 
 class TestMethod(TestCase):
-    """Base class for testin emulators."""
+    """Base class for testing emulators."""
 
     def setUp(self):
         """Init vars."""

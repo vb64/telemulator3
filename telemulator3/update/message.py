@@ -156,6 +156,18 @@ class Voice(Message):
         )
 
 
+class AudioDict(AudioBase, Dictionaryable):
+    """Dictionaryable AudioBase class."""
+
+    def to_dict(self):
+        """Return dictionary for Audio instanse."""
+        attr_list = [
+          'file_id', 'file_unique_id', 'duration', 'performer', 'title',
+          'file_name', 'mime_type', 'file_size', 'thumbnail',
+        ]
+        return attr_to_dic(self, attr_list)
+
+
 class Audio(Message):
     """Audio sended to chat."""
 
@@ -167,7 +179,7 @@ class Audio(Message):
         Message.__init__(
           self, chat, from_user,
           content_type='audio',
-          audio=AudioBase(
+          audio=AudioDict(
             file_id, file_id, duration,
             performer=performer, title=title, mime_type='audio/mp3', file_size=file_size
           ),
@@ -185,13 +197,25 @@ class Audio(Message):
         )
 
 
+class DocumentDict(DocumentBase, Dictionaryable):
+    """Dictionaryable DocumentBase class."""
+
+    def to_dict(self):
+        """Return dictionary for Audio instanse."""
+        attr_list = [
+          'file_id', 'file_unique_id', 'thumbnail', 'file_name',
+          'mime_type', 'file_size',
+        ]
+        return attr_to_dic(self, attr_list)
+
+
 class Document(Message):
     """Document sended to chat."""
 
     def __init__(self, chat, from_user, file_name, file_size, **kwargs):
         """Create document message."""
         file_id = "document_E2G40bZAfysKY0VU3jEWpToBkABGplqatdziomovwAAgI"
-        doc = DocumentBase(
+        doc = DocumentDict(
           file_id, file_id,
           thumb=None,
           file_name=file_name,

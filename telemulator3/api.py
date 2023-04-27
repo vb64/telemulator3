@@ -3,7 +3,7 @@ import os
 import importlib
 from time import mktime
 from datetime import datetime
-import threading
+from threading import Lock
 from telebot.types import Update as TeleUpdate
 
 from .user import User
@@ -110,7 +110,7 @@ class Telegram:
 
     def new_id(self, type_name):
         """Create new ID for given type."""
-        lock = threading.Lock()
+        lock = Lock()
         with lock:
             self._ids[type_name] += 1
             result = self._ids[type_name]
