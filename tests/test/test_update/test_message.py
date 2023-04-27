@@ -9,7 +9,14 @@ class TestMessage(TestUpdate):
     """Tests for Telegram messages of various types."""
 
     def test_message(self):
-        """Test comon message."""
+        """Test message."""
+        from telemulator3.update.message import Message
+
+        msg = Message(self.private, None)
+        assert str(msg) == ' >> '
+
+    def test_common(self):
+        """Test common messages."""
         from telemulator3.update.message import Text, NewChatMembers
 
         message = Text(self.private, self.teleuser, "Hello!")
