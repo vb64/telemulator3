@@ -10,6 +10,7 @@ def response(_api, _uri, _params):
       "ok": True,
       "result": {
         "file_id": "AgADAgADsacxG0gMnggDmmEhKp-RHSoNSw0ABIjmXO6ouSWqwVIAAgI",
+        "file_unique_id": "AgADAgADsacxG0gMnggDmmEhKp-RHSoNSw0ABIjmXO6ouSWqwVIAAgI",
         "file_size": 500,
         "file_path": "file_3.jpg",
       },
