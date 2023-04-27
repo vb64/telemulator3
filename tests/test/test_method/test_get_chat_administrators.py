@@ -6,7 +6,7 @@ from . import TestMethod
 
 
 class TestgetChatAdministrators(TestMethod):
-    """heck getChatAdministrators method.
+    """Check getChatAdministrators method.
 
     get_chat_administrators(
       chat_id
