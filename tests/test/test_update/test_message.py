@@ -69,3 +69,9 @@ class TestMessage(TestUpdate):
 
         message = Contact(self.private, self.teleuser, '2128506', 'Xxx', 'Yyy', None)
         assert "contact 2128506" in str(message)
+
+    def test_new_chat_members(self):
+        """Test NewChatMembers message."""
+        from telemulator3.update.message import NewChatMembers
+        msg = NewChatMembers(self.private, None, [])
+        assert 'joined by invite link:' in str(msg)
