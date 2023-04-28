@@ -60,3 +60,18 @@ class TestInit(TestCase):
     def test_tap_inline_button(self):
         """Check tap_inline_button."""
         assert self.telemul.tap_inline_button(self.teleuser, self.tele_message, 'xxx-yyy')
+
+    def test_helpers(self):
+        """Check send_* and private_* helper functions."""
+        from telemulator3 import (
+          private_command, private_text, private_document, private_photo, private_voice, private_contact,
+        )
+
+        user = self.teleuser
+
+        assert private_command("/start", user)
+        assert private_text("hi!", user)
+        assert private_document("test.txt", user)
+        assert private_photo(user)
+        assert private_voice(user)
+        assert private_contact("212-85-06", user, first_name="My", last_name="Contact", user_id="xxx-zzz")
