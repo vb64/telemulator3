@@ -1,4 +1,3 @@
-# pylint: disable=invalid-name
 """Module for forwardMessage method emulator."""
 from . import get_chat, get_int, message_to_dic, EmulatorException, error
 

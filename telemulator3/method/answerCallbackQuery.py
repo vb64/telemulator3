@@ -1,4 +1,3 @@
-# pylint: disable=invalid-name
 """Module for answerCallbackQuery method emulator."""
 from . import get_int, get, error
 

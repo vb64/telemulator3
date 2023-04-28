@@ -1,4 +1,3 @@
-# pylint: disable=invalid-name
 """Module for editMessageCaption method emulator."""
 from telebot.types import InlineKeyboardMarkup
 

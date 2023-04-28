@@ -38,7 +38,8 @@ jobs:
 
     - name: pylint
       run: |
-        python -m pylint telemulator3
+        python -m pylint telemulator3 --ignore=method
+        python -m pylint telemulator3/method --module-naming-style=camelCase
         python -m pylint tests/test
 
     - name: pytest

@@ -34,7 +34,8 @@ flake8:
 
 lint:
 	$(PYLINT) $(TESTS)/test
-	$(PYLINT) $(SOURCE)
+	$(PYLINT) $(SOURCE) --ignore=method
+	$(PYLINT) $(SOURCE)/method --module-naming-style=camelCase
 
 pep257:
 	$(PEP257) $(SOURCE)

@@ -1,4 +1,3 @@
-# pylint: disable=invalid-name
 """Module for sendPhoto method emulator."""
 from ..update.message import Photo
 from . import message_for_chat, get
