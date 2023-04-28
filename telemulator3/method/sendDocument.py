@@ -1,4 +1,3 @@
-# pylint: disable=invalid-name
 """Module for sendDocument method emulator."""
 from ..update.message import Document
 from . import message_for_chat, get

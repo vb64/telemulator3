@@ -1,4 +1,3 @@
-# pylint: disable=invalid-name
 """Module for sendAudio method emulator."""
 from ..update.message import Audio
 from . import message_for_chat, get

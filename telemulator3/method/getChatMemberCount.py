@@ -1,4 +1,3 @@
-# pylint: disable=invalid-name
 """Module for getChatMemberCount method emulator."""
 from . import with_chat
 

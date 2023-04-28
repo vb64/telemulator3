@@ -1,4 +1,3 @@
-# pylint: disable=invalid-name
 """Module for sendMessage method emulator."""
 from ..update.message import Text
 from . import EmulatorException, message_for_chat, get

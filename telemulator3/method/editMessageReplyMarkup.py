@@ -1,4 +1,3 @@
-# pylint: disable=invalid-name
 """Module for editMessageReplyMarkup method emulator."""
 from ..update import markup
 from . import with_chat, get_int, get_reply_markup

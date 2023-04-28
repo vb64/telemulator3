@@ -1,4 +1,3 @@
-# pylint: disable=invalid-name
 """Module for getFile method emulator."""
 
 
