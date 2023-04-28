@@ -91,3 +91,84 @@ class Telemulator:
     def tap_inline_button(self, user, message, button_code):
         """Call callback with mnemonic."""
         return self.callback(message, user, button_code)
+
+
+# helpers
+#########
+
+def send_command(chat, command, from_user, **kwargs):
+    """Send command to given chat."""
+    from .update.message import Command
+    return chat.send(Command(chat, from_user, command, **kwargs))
+
+
+def private_command(command, from_user, **kwargs):
+    """Send command to private chat."""
+    return send_command(from_user.private(), command, from_user, **kwargs)
+
+
+def send_text(chat, text, from_user, **kwargs):
+    """Send text to given chat."""
+    from .update.message import Text
+    return chat.send(Text(chat, from_user, text, **kwargs))
+
+
+def private_text(text, from_user, **kwargs):
+    """Send text to private chat."""
+    return send_text(from_user.private(), text, from_user, **kwargs)
+
+
+def send_document(chat, file_name, from_user, file_size=600, **kwargs):
+    """Send document to given chat."""
+    from .update.message import Document
+    return chat.send(Document(chat, from_user, file_name, file_size, **kwargs))
+
+
+def private_document(file_name, from_user, file_size=600, **kwargs):
+    """Send document to private chat."""
+    return send_document(
+      from_user.private(), file_name, from_user, file_size=file_size, **kwargs
+    )
+
+
+def send_photo(chat, from_user, caption='caption', width=640, height=480, file_size=500, **kwargs):
+    """Send photo to given chat."""
+    from .update.message import Photo
+    return chat.send(Photo(chat, from_user, caption, width, height, file_size, **kwargs))
+
+
+def private_photo(from_user, caption='caption', width=640, height=480, file_size=500, **kwargs):
+    """Send photo to private chat."""
+    return send_photo(
+      from_user.private(), from_user, caption=caption,
+      width=width, height=height, file_size=file_size, **kwargs
+    )
+
+
+def send_voice(chat, from_user, duration=5, file_size=500, **kwargs):
+    """Send voice to given chat."""
+    from .update.message import Voice
+    return chat.send(Voice(chat, from_user, duration, file_size, **kwargs))
+
+
+def private_voice(from_user, duration=5, file_size=500, **kwargs):
+    """Send voice to private chat."""
+    return send_voice(
+      from_user.private(), from_user, duration=duration, file_size=file_size, **kwargs
+    )
+
+
+def send_contact(chat, phone_number, from_user, first_name='Contact', last_name='User', user_id=777, **kwargs):
+    """Send contact to given chat."""
+    from .update.message import Contact
+    return chat.send(
+      Contact(chat, from_user, phone_number, first_name, last_name, user_id, **kwargs)
+    )
+
+
+def private_contact(phone_number, from_user, first_name='Contact', last_name='User', user_id=777, **kwargs):
+    """Send contact to private chat."""
+    return send_contact(
+      from_user.private(), phone_number, from_user,
+      first_name=first_name, last_name=last_name, user_id=user_id, **kwargs
+    )
