@@ -18,26 +18,24 @@ def send_welcome(message):
 telemul = Telemulator()
 telemul.set_tested_bot(bot, username='my_bot', name='My Bot')
 
-# Play with API calls.
+# At start, there are no registered users in emulated API.
 assert not telemul.api.users
 
-# API user, that represent our bot
+# Make API user, that represent our bot.
+# It's a first registered user.
 mybot = telemul.api.get_me()
 assert mybot.is_bot
 assert mybot.username == 'my_bot'
-
-# our bot is a first registered user
 assert len(telemul.api.users) == 1
 
-# new user open private chat with bot
+# New user open private chat with bot and send `/start` command.
+# Bot must answer as defined and his answer must be in chat history.
 user = telemul.api.create_user('User')
 chat = user.private()
-
 send_command(chat, '/start', user)
-# Answer from bot must be in chat history
 assert chat.history.contain('Howdy, how are you doing?')
 
-# user create group and add bot as member
+# User create group and add bot as member.
 group = user.create_group('My group')
 group.add_members(user, [mybot])
 assert group.history.contain('invite new members:')
