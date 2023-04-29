@@ -1,17 +1,7 @@
 """Root class for testing."""
 import os
 import unittest
-import telebot
-
-
-class Bot(telebot.TeleBot):
-    """Bot instance for tests."""
-
-    def __init__(self):
-        """Telebot is parent."""
-        super().__init__('xxx-yyy-zzz', threaded=False)
-        self.name = 'Test bot'
-        self.username = 'bot-username'
+from telebot import TeleBot
 
 
 class TestCase(unittest.TestCase):
@@ -24,7 +14,11 @@ class TestCase(unittest.TestCase):
         from telemulator3 import Telemulator
 
         self.telemul = Telemulator()
-        self.telemul.set_tested_bot(Bot())
+        self.telemul.set_tested_bot(
+          TeleBot('xxx-yyy-zzz', threaded=False),
+          name='Test bot',
+          username='bot-username'
+        )
 
         self.api = self.telemul.api
         self.bot = self.api.bot
