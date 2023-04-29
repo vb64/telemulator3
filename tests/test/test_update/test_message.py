@@ -33,7 +33,8 @@ class TestMessage(TestUpdate):
         from telemulator3.update.message import Command
 
         message = Command(self.private, self.teleuser, "/start")
-        assert message.entities.type == 'bot_command'
+        # assert message.entities.type == 'bot_command'
+        assert message.text == '/start'
 
     def test_photo(self):
         """Test Photo message."""

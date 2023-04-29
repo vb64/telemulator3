@@ -2,47 +2,52 @@
 
 make test T=test_readme.py
 """
-import unittest
 from telebot import TeleBot
 from telemulator3 import Telemulator, send_command
 
+bot = TeleBot('xxx-yyy-zzz', threaded=False)
 
-class TestCase(unittest.TestCase, Telemulator):
-    """Testing with Telemulator."""
 
-    def setUp(self):
-        """Connect your bot to test suite."""
-        super().setUp()
-        self.set_tested_bot(TeleBot('xxx-yyy-zzz', threaded=False))
+@bot.message_handler(commands=['start', 'help'])
+def send_welcome(message):
+    """Bot answer for /start and /help."""
+    bot.reply_to(message, "Howdy, how are you doing?")
 
-        # Your bot is available via api property.
-        # Your need to set bot name and username.
-        self.api.bot.username = 'my_bot'
-        self.api.bot.name = 'My Bot'
 
-    def test_api(self):
-        """Play with API calls."""
-        assert not self.api.users
+telemul = Telemulator()
 
-        # create API user for our bot
-        bot = self.api.get_me()
-        assert bot.is_bot
-        assert bot.username == 'my_bot'
+# Start emulation for bot
+telemul.set_tested_bot(bot)
 
-        # our bot is a first registered user
-        assert len(self.api.users) == 1
+# Your bot is available via api property.
+# Your need to set bot name and username.
+telemul.api.bot.username = 'my_bot'
+telemul.api.bot.name = 'My Bot'
 
-        # new user open private chat with bot
-        user = self.api.create_user('User')
-        chat = user.private()
-        send_command(chat, '/start', user)
-        assert chat.history.contain('/start')
+# Play with API calls.
+assert not telemul.api.users
 
-        # user create group and add bot as member
-        group = user.create_group('My group')
-        group.add_members(user, [bot])
-        assert group.history.contain('invite new members:')
+# API user, that represent our bot
+mybot = telemul.api.get_me()
+assert mybot.is_bot
+assert mybot.username == 'my_bot'
 
-        bot.leave(group)
-        assert group.history.contain('My Bot (ID 1) left chat')
-        # group.history.dump()
+# our bot is a first registered user
+assert len(telemul.api.users) == 1
+
+# new user open private chat with bot
+user = telemul.api.create_user('User')
+chat = user.private()
+
+send_command(chat, '/start', user)
+# Answer from bot must be in chat history
+assert chat.history.contain('Howdy, how are you doing?')
+
+# user create group and add bot as member
+group = user.create_group('My group')
+group.add_members(user, [mybot])
+assert group.history.contain('invite new members:')
+
+mybot.leave(group)
+assert group.history.contain('My Bot (ID 1) left chat')
+# group.history.dump()

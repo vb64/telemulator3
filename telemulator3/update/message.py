@@ -1,6 +1,6 @@
 """Telegram types with specialized constructors and text representation."""
 from telebot.types import (
-  Message as MessageBase, MessageEntity, PhotoSize as PhotoSizeBase, Audio as AudioBase,
+  Message as MessageBase, PhotoSize as PhotoSizeBase, Audio as AudioBase,
   Document as DocumentBase, Contact as ContactBase, Voice as VoiceBase,
 )
 from ..dictionaryable import Dictionaryable
@@ -91,8 +91,8 @@ class Command(Text):
 
     def __init__(self, chat, from_user, text, **kwargs):
         """Create command message."""
-        entities = MessageEntity("bot_command", 0, len(text))
-        Text.__init__(self, chat, from_user, text=text, entities=entities, **kwargs)
+        # entities = MessageEntity("bot_command", 0, len(text))
+        Text.__init__(self, chat, from_user, text=text, **kwargs)
 
 
 class PhotoSize(PhotoSizeBase, Dictionaryable):
