@@ -28,7 +28,7 @@ assert mybot.is_bot
 assert mybot.username == 'my_bot'
 assert len(telemul.api.users) == 1
 
-# New user open private chat with bot ond send `/start` command.
+# New user open private chat with bot and send `/start` command.
 # Bot must answer as defined and his answer must be in chat history.
 user = telemul.api.create_user('User')
 chat = user.private()

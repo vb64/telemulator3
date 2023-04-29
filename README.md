@@ -21,13 +21,12 @@ Create TeleBot instance and start emulate Telegram API for bot.
 
 ```python
 from telebot import TeleBot
-from telemulator3 import Telemulator, send_command
+from telemulator3 import Telemulator
 
 bot = TeleBot('xxx-yyy-zzz', threaded=False)
 
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
-    """Bot answer for /start and /help."""
     bot.reply_to(message, "Howdy, how are you doing?")
 
 telemul = Telemulator()
@@ -50,10 +49,12 @@ assert mybot.username == 'my_bot'
 assert len(telemul.api.users) == 1
 ```
 
-New user open private chat with bot ond send `/start` command.
+New user open private chat with bot and send `/start` command.
 Bot must answer as defined and his answer must be in chat history.
 
 ```python
+from telemulator3 import send_command
+
 user = telemul.api.create_user('User')
 chat = user.private()
 send_command(chat, '/start', user)
