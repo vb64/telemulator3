@@ -8,9 +8,11 @@ from telemulator3 import Telemulator, send_command
 bot = TeleBot('xxx-yyy-zzz', threaded=False)
 
 
-# @bot.message_handler(commands=['start', 'help'])
-# def send_welcome(message):
-# 	bot.reply_to(message, "Howdy, how are you doing?")
+@bot.message_handler(commands=['start', 'help'])
+def send_welcome(message):
+    """Bot answer for /start and /help."""
+    bot.reply_to(message, "Howdy, how are you doing?")
+
 
 telemul = Telemulator()
 
@@ -25,10 +27,10 @@ telemul.api.bot.name = 'My Bot'
 # Play with API calls.
 assert not telemul.api.users
 
-# create API user for our bot
-bot = telemul.api.get_me()
-assert bot.is_bot
-assert bot.username == 'my_bot'
+# API user, that represent our bot
+mybot = telemul.api.get_me()
+assert mybot.is_bot
+assert mybot.username == 'my_bot'
 
 # our bot is a first registered user
 assert len(telemul.api.users) == 1
@@ -37,18 +39,15 @@ assert len(telemul.api.users) == 1
 user = telemul.api.create_user('User')
 chat = user.private()
 
-# print('###')
-# telemul.print_trace(True)
-
 send_command(chat, '/start', user)
-assert chat.history.contain('/start')
-chat.history.dump()
+# Answer from bot must be in chat history
+assert chat.history.contain('Howdy, how are you doing?')
 
 # user create group and add bot as member
 group = user.create_group('My group')
-group.add_members(user, [bot])
+group.add_members(user, [mybot])
 assert group.history.contain('invite new members:')
 
-bot.leave(group)
+mybot.leave(group)
 assert group.history.contain('My Bot (ID 1) left chat')
 # group.history.dump()
