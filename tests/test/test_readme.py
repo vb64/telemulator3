@@ -14,15 +14,9 @@ def send_welcome(message):
     bot.reply_to(message, "Howdy, how are you doing?")
 
 
+# Emulate Telegram API for bot
 telemul = Telemulator()
-
-# Start emulation for bot
-telemul.set_tested_bot(bot)
-
-# Your bot is available via api property.
-# Your need to set bot name and username.
-telemul.api.bot.username = 'my_bot'
-telemul.api.bot.name = 'My Bot'
+telemul.set_tested_bot(bot, username='my_bot', name='My Bot')
 
 # Play with API calls.
 assert not telemul.api.users

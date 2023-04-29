@@ -16,19 +16,13 @@ class Telemulator:
     tele_message = None
     group_message = None
 
-    def set_tested_bot(self, bot):
-        """Set bot for testing.
-
-        The bot must have follows properties and methods:
-
-        - name: bot name
-        - username: bot username
-        - token: bot API token
-        - process_new_updates([update]): method for process Telegram API update
-        """
+    def set_tested_bot(self, bot, username='tested_bot', name='Test Bot'):
+        """Set telebot.TeleBot instance for testing."""
         from .api import Telegram
 
         self.clean_proxy()
+        bot.username = username
+        bot.name = name
         self.api = Telegram(bot)
 
     @property
