@@ -80,8 +80,8 @@ assert group.history.contain('My Bot (ID 1) left chat')
 ## Development
 
 ```
-$ git clone git@github.com:vb64/telemulator3
-$ cd telemulator3
-$ make setup PYTHON_BIN=/path/to/python3
-$ make tests
+git clone git@github.com:vb64/telemulator3
+cd telemulator3
+make setup PYTHON_BIN=/path/to/python3
+make tests
 ```
