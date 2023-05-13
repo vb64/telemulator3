@@ -1,4 +1,4 @@
-flask==2.2.3
+flask==2.2.5
 flake8
 pylint
 pydocstyle
