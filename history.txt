@@ -1,3 +1,5 @@
+- Bot `name` and `username` properties moved to api object.
+
 13.05.2023 ver.1.2
 ------------------
 

@@ -14,9 +14,7 @@ class Telemulator:
         """Set telebot.TeleBot instance for testing."""
         from .api import Telegram
 
-        bot.username = username
-        bot.name = name
-        self.api = Telegram(bot)
+        self.api = Telegram(bot, username, name)
 
     @property
     def bot(self):

@@ -13,8 +13,8 @@ def response(api, _uri, _params):
       "result": {
         "id": api.bot.id,
         "is_bot": True,
-        "first_name": api.bot.name,
-        "username": api.bot.username,
+        "first_name": api.bot_name,
+        "username": api.bot_username,
       }
     }
     return (200, data)
