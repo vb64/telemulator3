@@ -12,8 +12,8 @@ class TestInit(TestCase):
         """Bot properties."""
         assert self.telemul
         assert self.telemul.bot
-        assert self.telemul.bot.name == 'Test bot'
-        assert self.telemul.bot.username == 'bot-username'
+        assert self.telemul.api.get_me().first_name == 'Test bot'
+        assert self.telemul.api.get_me().username == 'bot-username'
         assert self.telemul.bot.token == 'xxx-yyy-zzz'
 
     def test_create_group(self):

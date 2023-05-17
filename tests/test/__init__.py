@@ -25,7 +25,7 @@ class TestCase(unittest.TestCase):
         self.api.file_store_path = os.path.join('tests', 'file_store')
 
         assert not self.api.users
-        assert self.api.get_me().username == self.api.bot.username
+        assert self.api.get_me().username == 'bot-username'
         assert len(self.api.users) == 1
 
         self.teleuser = self.api.create_user('Test', 'User', language_code='en')

@@ -75,7 +75,7 @@ class Telegram:
 
     def __init__(  # pylint: disable=too-many-arguments
       self,
-      bot,
+      bot, username, name,
       file_store_path=None,
       start_update_id=0,
       start_callback_query_id=0,
@@ -90,6 +90,8 @@ class Telegram:
         self.bot = bot
         self.bot.id = 0
         self._me = None
+        self.bot_username = username
+        self.bot_name = name
 
         self.users = {}
         self.chats = {}
