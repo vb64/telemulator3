@@ -15,6 +15,13 @@ class TestApi(TestCase):
     code = 200
     data = 'testMethodData'
 
+    def test_set_error(self):
+        """Check set_error method."""
+        self.api.set_error('getMe', 500)
+        code, data = self.api.get_answer('getMe', '', {}, {})
+        assert code == 200
+        assert data['error_code'] == 500
+
     def test_emulate_bot(self):
         """Emulate_bot call."""
         from telemulator3.api import emulate_bot

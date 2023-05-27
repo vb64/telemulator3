@@ -1,3 +1,5 @@
++ Added `api.set_error` method.
+
 17.05.2023 ver.1.3
 ------------------
 

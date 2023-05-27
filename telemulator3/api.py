@@ -220,3 +220,11 @@ class Telegram:
           username=username,
           language_code=None
         )
+
+    def set_error(self, method_name, error_code, text='???'):
+        """Set api error responce for given method."""
+        self.answers[method_name] = (200, {
+          'ok': False,
+          'error_code': error_code,
+          'description': text,
+        })
