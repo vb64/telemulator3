@@ -1,3 +1,8 @@
+07.05.2024 ver.1.5
+------------------
+
+* Checks for required pyTelegramBotAPI version on install.
+
 27.05.2023 ver.1.4
 ------------------
 
